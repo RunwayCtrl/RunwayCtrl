@@ -74,16 +74,16 @@ For integration testing with real services (Jira, ServiceNow, GitHub), see [TEST
 
 ### Naming Conventions
 
-| Thing | Convention | Example |
-|-------|-----------|---------|
-| Files | kebab-case | `begin-action.service.ts` |
-| Classes | PascalCase | `ActionRepository` |
-| Functions | camelCase | `beginAction()` |
-| Constants | SCREAMING_SNAKE | `MAX_RETRY_ATTEMPTS` |
-| Types/Interfaces | PascalCase | `BeginActionRequest` |
-| Database columns | snake_case | `action_key`, `tenant_id` |
-| API fields | snake_case | `retry_after_ms`, `failure_class` |
-| Env vars | SCREAMING_SNAKE | `JIRA_API_TOKEN` |
+| Thing            | Convention      | Example                           |
+| ---------------- | --------------- | --------------------------------- |
+| Files            | kebab-case      | `begin-action.service.ts`         |
+| Classes          | PascalCase      | `ActionRepository`                |
+| Functions        | camelCase       | `beginAction()`                   |
+| Constants        | SCREAMING_SNAKE | `MAX_RETRY_ATTEMPTS`              |
+| Types/Interfaces | PascalCase      | `BeginActionRequest`              |
+| Database columns | snake_case      | `action_key`, `tenant_id`         |
+| API fields       | snake_case      | `retry_after_ms`, `failure_class` |
+| Env vars         | SCREAMING_SNAKE | `JIRA_API_TOKEN`                  |
 
 ### Testing
 
@@ -116,17 +116,17 @@ We use [Conventional Commits](https://www.conventionalcommits.org/):
 
 ### Types
 
-| Type | When to use |
-|------|-------------|
-| `feat` | New feature |
-| `fix` | Bug fix |
-| `docs` | Documentation only |
+| Type       | When to use                                             |
+| ---------- | ------------------------------------------------------- |
+| `feat`     | New feature                                             |
+| `fix`      | Bug fix                                                 |
+| `docs`     | Documentation only                                      |
 | `refactor` | Code change that neither fixes a bug nor adds a feature |
-| `test` | Adding or updating tests |
-| `chore` | Build process, tooling, dependencies |
-| `perf` | Performance improvement |
-| `ci` | CI/CD changes |
-| `security` | Security fix or improvement |
+| `test`     | Adding or updating tests                                |
+| `chore`    | Build process, tooling, dependencies                    |
+| `perf`     | Performance improvement                                 |
+| `ci`       | CI/CD changes                                           |
+| `security` | Security fix or improvement                             |
 
 ### Scopes (optional but encouraged)
 

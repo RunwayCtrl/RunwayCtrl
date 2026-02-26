@@ -585,25 +585,25 @@ RETURNING *;
 
 **Columns**
 
-| Column | Type | Null | Default | Notes |
-| --- | --- | ---: | --- | --- |
-| tenant_id | text | No | — | Tenant scope |
-| stat_date | date | No | — | Aggregation date |
-| tool | text | No | — | Tool name |
-| action | text | No | — | Action name |
-| total_actions | int | No | 0 | Actions initiated on this date |
-| total_attempts | int | No | 0 | Total attempts (including retries) |
-| successful_actions | int | No | 0 | Actions that terminated SUCCESS |
-| failed_actions | int | No | 0 | Actions that terminated FAILURE |
-| unknown_outcomes | int | No | 0 | Actions still in UNKNOWN state |
-| replay_hits | int | No | 0 | REPLAY_SUCCESS + REPLAY_FAILURE responses |
-| avg_latency_ms | int | Yes | null | Average attempt duration |
-| p95_latency_ms | int | Yes | null | 95th percentile attempt duration |
-| total_retry_waste | int | No | 0 | Attempts beyond the first per action |
-| budget_denials | int | No | 0 | Governor budget denials |
-| lease_denials | int | No | 0 | Lease acquisition denials |
-| circuit_opens | int | No | 0 | Circuit breaker open events |
-| computed_at | timestamptz | No | now() | When this row was last computed |
+| Column             | Type        | Null | Default | Notes                                     |
+| ------------------ | ----------- | ---: | ------- | ----------------------------------------- |
+| tenant_id          | text        |   No | —       | Tenant scope                              |
+| stat_date          | date        |   No | —       | Aggregation date                          |
+| tool               | text        |   No | —       | Tool name                                 |
+| action             | text        |   No | —       | Action name                               |
+| total_actions      | int         |   No | 0       | Actions initiated on this date            |
+| total_attempts     | int         |   No | 0       | Total attempts (including retries)        |
+| successful_actions | int         |   No | 0       | Actions that terminated SUCCESS           |
+| failed_actions     | int         |   No | 0       | Actions that terminated FAILURE           |
+| unknown_outcomes   | int         |   No | 0       | Actions still in UNKNOWN state            |
+| replay_hits        | int         |   No | 0       | REPLAY_SUCCESS + REPLAY_FAILURE responses |
+| avg_latency_ms     | int         |  Yes | null    | Average attempt duration                  |
+| p95_latency_ms     | int         |  Yes | null    | 95th percentile attempt duration          |
+| total_retry_waste  | int         |   No | 0       | Attempts beyond the first per action      |
+| budget_denials     | int         |   No | 0       | Governor budget denials                   |
+| lease_denials      | int         |   No | 0       | Lease acquisition denials                 |
+| circuit_opens      | int         |   No | 0       | Circuit breaker open events               |
+| computed_at        | timestamptz |   No | now()   | When this row was last computed           |
 
 **Constraints**
 

@@ -1,12 +1,12 @@
 # RB-OPS-004: Basic Load Test Runbook
 
-| Field     | Value                                      |
-| --------- | ------------------------------------------ |
-| Runbook   | RB-OPS-004                                 |
-| Category  | Operations — Load Testing                  |
-| Severity  | Gate blocker (Phase 8)                     |
-| Owner     | Engineering                                |
-| Status    | Draft                                      |
+| Field    | Value                     |
+| -------- | ------------------------- |
+| Runbook  | RB-OPS-004                |
+| Category | Operations — Load Testing |
+| Severity | Gate blocker (Phase 8)    |
+| Owner    | Engineering               |
+| Status   | Draft                     |
 
 ---
 

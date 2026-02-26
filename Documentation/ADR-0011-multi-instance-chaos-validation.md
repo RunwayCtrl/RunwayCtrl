@@ -1,11 +1,11 @@
 # ADR-0011: Multi-Instance Correctness + Chaos Validation
 
-| Field    | Value                          |
-| -------- | ------------------------------ |
-| Status   | Accepted                       |
-| Date     | 2026-01-21                     |
-| Context  | Phase 8A planning              |
-| Relates  | ADR-0002, ADR-0004             |
+| Field   | Value              |
+| ------- | ------------------ |
+| Status  | Accepted           |
+| Date    | 2026-01-21         |
+| Context | Phase 8A planning  |
+| Relates | ADR-0002, ADR-0004 |
 
 ---
 

@@ -689,7 +689,6 @@ flowchart LR
   - [ ] rejected key reasons (revoked/invalid)
 - [ ] Document restore procedure for Postgres
 
-
 ---
 
 ## PHASE 8A — Multi-Instance Correctness + Chaos Validation
@@ -895,7 +894,6 @@ CREATE INDEX idx_exec_stats_tenant_date
 - [ ] OTel metrics emitted for aggregation and query paths
 - [ ] Console wireframe approved and API client ready
 
-
 ## P8 Gate: Definition of Done
 
 - [ ] Security guideline checklist in `Documentation/Security Guidelines.md` is satisfied for v0.1
@@ -991,6 +989,7 @@ Reference (canonical for Phase 9):
 ### P9.0.3 Dev Credential Management
 
 - [ ] Create `.env.local.example` with placeholders for all integration credentials:
+
   ```env
   # Jira Cloud (Developer Site)
   JIRA_BASE_URL=https://YOUR-SITE.atlassian.net
@@ -1009,6 +1008,7 @@ Reference (canonical for Phase 9):
   RUNWAYCTRL_BASE_URL=http://localhost:8080
   RUNWAYCTRL_API_KEY=dev-api-key
   ```
+
 - [ ] Add `.env.local` to `.gitignore` (verify it's present)
 - [ ] Document: local dev uses `.env.local` (never committed)
 - [ ] Document: CI uses GitHub Actions encrypted secrets (`Settings → Secrets → Actions`)
@@ -2389,4 +2389,3 @@ Phase 13 — Demo Harness (Option B: Mock Jira + ServiceNow) (safe, local)
   - [ ] **Lease serialization** (concurrent Jira transition → orderly, no 409)
   - [ ] **UNKNOWN outcome safety** (mark unknown; poll/replay before reattempt)
 - [ ] Demo code is isolated under `examples/` and does not alter core semantics.
-

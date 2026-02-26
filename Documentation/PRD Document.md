@@ -29,17 +29,17 @@ RunwayCtrl’s wedge is not “agent memory” or “prompting.” It’s the pa
 
 ### 1.1 Systems of record (what owns truth)
 
-RunwayCtrl is the **system of record for execution truth** — the durable facts about *what intent was declared*, *what attempts happened*, *what governance decisions were made*, and *what outcome pointer (if any) was produced*.
+RunwayCtrl is the **system of record for execution truth** — the durable facts about _what intent was declared_, _what attempts happened_, _what governance decisions were made_, and _what outcome pointer (if any) was produced_.
 
 RunwayCtrl is **not** the system of record for the domain objects it touches (incidents, tickets, PRs). Those remain owned by their native systems.
 
-| System | System of record for… | RunwayCtrl stores (v0.1)
-| --- | --- | --- |
-| **RunwayCtrl Ledger** | Action identity, attempt history, governance/lease decisions, and outcome pointers | `action_key`, `attempt_id`, states, timestamps, decision reasons, retry-after, outcome pointers (e.g., external IDs) |
-| **GitHub** (v0.1 integration) | Repos/PRs/issues/commits and their current state | Pointers like `repo`, `issue_number`, `pr_number`, `sha` + minimal metadata |
-| **Jira** (v0.1 integration) | Issues/tickets/comments and their lifecycle state | Pointers like `issue_key`, `issue_id` + minimal metadata needed for replay/dedupe/audit |
-| **ServiceNow** (v0.1 integration) | Incidents/changes/CIs and their lifecycle state | Pointers like `sys_id`, `number` (e.g., INC0042891) + minimal metadata |
-| **PagerDuty** (future nice-to-have) | Incidents, on-call/escalation state | Pointers like `incident_id` + minimal metadata needed for replay/dedupe/audit |
+| System                              | System of record for…                                                              | RunwayCtrl stores (v0.1)                                                                                             |
+| ----------------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| **RunwayCtrl Ledger**               | Action identity, attempt history, governance/lease decisions, and outcome pointers | `action_key`, `attempt_id`, states, timestamps, decision reasons, retry-after, outcome pointers (e.g., external IDs) |
+| **GitHub** (v0.1 integration)       | Repos/PRs/issues/commits and their current state                                   | Pointers like `repo`, `issue_number`, `pr_number`, `sha` + minimal metadata                                          |
+| **Jira** (v0.1 integration)         | Issues/tickets/comments and their lifecycle state                                  | Pointers like `issue_key`, `issue_id` + minimal metadata needed for replay/dedupe/audit                              |
+| **ServiceNow** (v0.1 integration)   | Incidents/changes/CIs and their lifecycle state                                    | Pointers like `sys_id`, `number` (e.g., INC0042891) + minimal metadata                                               |
+| **PagerDuty** (future nice-to-have) | Incidents, on-call/escalation state                                                | Pointers like `incident_id` + minimal metadata needed for replay/dedupe/audit                                        |
 
 If there’s ever a mismatch: **the tool is authoritative for the tool object’s current state**, while **the ledger is authoritative for RunwayCtrl’s execution facts** (“we attempted X”, “we got UNKNOWN”, “we decided to JOIN”, “we saw external ID Y”).
 

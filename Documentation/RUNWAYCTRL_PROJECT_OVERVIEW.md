@@ -37,7 +37,7 @@ RunwayCtrl is being built spec-first, but we explicitly track implementation rea
 - Jira + ServiceNow + GitHub integration packages.
 - Ledger Insights / analytics endpoints (`/v1/insights/*`) — cost optimization and execution intelligence mined from durable ledger data.
 - Multi-instance correctness validation harness (testcontainers-node + chaos tests proving CAS/lease/governor correctness across N instances).
-This matters because our product is semantics: if semantics are only in docs, we don’t have a product yet.
+  This matters because our product is semantics: if semantics are only in docs, we don’t have a product yet.
 
 ---
 

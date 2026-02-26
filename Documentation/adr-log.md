@@ -52,18 +52,18 @@ ADRs prevent “architectural amnesia” and make onboarding and refactors sane.
 
 > The index below is the table of contents for architecture decisions.
 
-| ADR ID   | Title                                                                          | Status   | Date             | Owners   | References                                   |
-| -------- | ------------------------------------------------------------------------------ | -------- | ---------------- | -------- | -------------------------------------------- |
-| ADR-0001 | ActionKey as the canonical idempotency surface                                 | ACCEPTED | January 21, 2026 | Platform | State Machines + Invariants; API Contract    |
-| ADR-0002 | Ledger-first persistence in Postgres with CAS updates                          | ACCEPTED | January 21, 2026 | Platform | Data Model Spec; State Machines + Invariants |
-| ADR-0003 | BeginAction decision outcomes: PROCEED / PENDING / REPLAY                      | ACCEPTED | January 21, 2026 | Platform | API Contract; Error/Retry Spec               |
-| ADR-0004 | Enforce invariants in the application layer (CAS) first; add DB triggers later | ACCEPTED | January 21, 2026 | Platform | State Machines + Invariants                  |
-| ADR-0005 | OpenTelemetry-first observability contract (spans/metrics/logs)                | ACCEPTED | January 21, 2026 | Platform | Observability + OTel Contract                |
-| ADR-0006 | Retry governance: budgets + jitter + Retry-After compliance                    | ACCEPTED | January 21, 2026 | Platform | Error Codes + Retry Semantics                |
-| ADR-0007 | Multi-tenant isolation: tenant_id in every PK/unique constraint                | ACCEPTED | January 21, 2026 | Platform | Data Model Spec; Security Guidelines         |
-| ADR-0008 | API-first v0.1: UI is optional; correctness + ops come first                   | ACCEPTED | January 21, 2026 | Platform | PRD; Backend Structure                       |
-| ADR-0009 | Payload capture stance: hashes/pointers default; opt-in artifacts              | ACCEPTED | January 29, 2026 | Platform | PRD; Security Guidelines; Backend Structure  |
-| ADR-0010 | Ledger Insights: analytics + cost optimization from durable data               | ACCEPTED | January 21, 2026 | Platform | Data Model Spec; Observability; OTel Contract |
+| ADR ID   | Title                                                                          | Status   | Date             | Owners   | References                                           |
+| -------- | ------------------------------------------------------------------------------ | -------- | ---------------- | -------- | ---------------------------------------------------- |
+| ADR-0001 | ActionKey as the canonical idempotency surface                                 | ACCEPTED | January 21, 2026 | Platform | State Machines + Invariants; API Contract            |
+| ADR-0002 | Ledger-first persistence in Postgres with CAS updates                          | ACCEPTED | January 21, 2026 | Platform | Data Model Spec; State Machines + Invariants         |
+| ADR-0003 | BeginAction decision outcomes: PROCEED / PENDING / REPLAY                      | ACCEPTED | January 21, 2026 | Platform | API Contract; Error/Retry Spec                       |
+| ADR-0004 | Enforce invariants in the application layer (CAS) first; add DB triggers later | ACCEPTED | January 21, 2026 | Platform | State Machines + Invariants                          |
+| ADR-0005 | OpenTelemetry-first observability contract (spans/metrics/logs)                | ACCEPTED | January 21, 2026 | Platform | Observability + OTel Contract                        |
+| ADR-0006 | Retry governance: budgets + jitter + Retry-After compliance                    | ACCEPTED | January 21, 2026 | Platform | Error Codes + Retry Semantics                        |
+| ADR-0007 | Multi-tenant isolation: tenant_id in every PK/unique constraint                | ACCEPTED | January 21, 2026 | Platform | Data Model Spec; Security Guidelines                 |
+| ADR-0008 | API-first v0.1: UI is optional; correctness + ops come first                   | ACCEPTED | January 21, 2026 | Platform | PRD; Backend Structure                               |
+| ADR-0009 | Payload capture stance: hashes/pointers default; opt-in artifacts              | ACCEPTED | January 29, 2026 | Platform | PRD; Security Guidelines; Backend Structure          |
+| ADR-0010 | Ledger Insights: analytics + cost optimization from durable data               | ACCEPTED | January 21, 2026 | Platform | Data Model Spec; Observability; OTel Contract        |
 | ADR-0011 | Multi-instance correctness + chaos validation harness                          | ACCEPTED | January 21, 2026 | Platform | Infra Blueprint; Security Guidelines; State Machines |
 
 ---

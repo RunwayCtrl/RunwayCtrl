@@ -1,11 +1,11 @@
 # ADR-0010: Ledger Insights — Analytics + Cost Optimization from Durable Data
 
-| Field    | Value                          |
-| -------- | ------------------------------ |
-| Status   | Accepted                       |
-| Date     | 2026-01-21                     |
-| Context  | Phase 8B planning              |
-| Relates  | ADR-0002, ADR-0004, ADR-0009   |
+| Field   | Value                        |
+| ------- | ---------------------------- |
+| Status  | Accepted                     |
+| Date    | 2026-01-21                   |
+| Context | Phase 8B planning            |
+| Relates | ADR-0002, ADR-0004, ADR-0009 |
 
 ---
 

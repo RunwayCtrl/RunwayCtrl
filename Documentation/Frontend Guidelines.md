@@ -27,6 +27,7 @@
 - No editing/policy management (read-only)
 
 **2026 Design Language:**
+
 - Bento grid layout (asymmetric card grid for scoreboard + insights)
 - Glassmorphism depth (subtle frosted glass on cards, layered shadows)
 - Micro-interactions (hover reveals, animated number counters, pulsing status dots)
@@ -177,6 +178,7 @@ A “heat map” page that surfaces:
 - highest UNKNOWN rates
 - longest lease waits
 - top 429/5xx tools and endpoints (if available)
+
 ### 4.5A Integration Health Screen (NEW — per-provider connection + rate limits)
 
 > **This is the "hotel connection" dashboard** — each integration is a connection with health, latency, and quota status. Answers: "Are my integrations healthy? Am I about to hit a rate limit?"
@@ -189,7 +191,6 @@ A “heat map” page that surfaces:
   - Click icon → scroll to provider card
 
 - **Main — Provider Connection Cards** (one per configured integration, bento grid):
-
   - **Jira Cloud Card:**
     - Connection status: pulsing dot (green/amber/red) + last successful call timestamp
     - Success rate (last 1h): large % + sparkline
@@ -233,6 +234,7 @@ A “heat map” page that surfaces:
 - Empty state: "No integration activity yet. Rate limit data will appear after the first tool execution."
 - Radial gauges use CSS `conic-gradient` — no heavy chart library dependency.
 - Each card can be expanded/collapsed independently (progressive disclosure).
+
 ### 4.6 Insights / Analytics Screen (Ledger Intelligence)
 
 > Data source: `/v1/insights/*` endpoints (read from `execution_daily_stats`, never hot write path).
@@ -398,6 +400,7 @@ This mirrors the dev-first ergonomics of the rest of RunwayCtrl.
 ## 11) Component checklist (build once, reuse forever)
 
 **Core components:**
+
 - Status chip (SUCCESS/FAILURE/UNKNOWN/IN_FLIGHT) with micro-animation (pulse on UNKNOWN)
 - Copy-to-clipboard button with confirmation toast
 - Time range picker (absolute + relative, sticky global)
@@ -409,6 +412,7 @@ This mirrors the dev-first ergonomics of the rest of RunwayCtrl.
 - "Open in Trace" link component
 
 **New — 2026 interactive components:**
+
 - Command palette (Cmd+K) — global fuzzy search across actions, attempts, resource_keys
 - Collapsible side panel — slide-over detail view (right edge, 400px width, close on Escape)
 - Animated number counter — smooth count-up on load, locale-formatted

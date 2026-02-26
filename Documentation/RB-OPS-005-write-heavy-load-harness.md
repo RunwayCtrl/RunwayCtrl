@@ -1,12 +1,12 @@
 # RB-OPS-005: Write-Heavy Correctness Harness
 
-| Field     | Value                                      |
-| --------- | ------------------------------------------ |
-| Runbook   | RB-OPS-005                                 |
-| Category  | Operations — Correctness Validation        |
-| Severity  | Gate blocker (Phase 8)                     |
-| Owner     | Engineering                                |
-| Status    | Draft                                      |
+| Field    | Value                               |
+| -------- | ----------------------------------- |
+| Runbook  | RB-OPS-005                          |
+| Category | Operations — Correctness Validation |
+| Severity | Gate blocker (Phase 8)              |
+| Owner    | Engineering                         |
+| Status   | Draft                               |
 
 ---
 
@@ -31,7 +31,7 @@ Verify that RunwayCtrl's ledger invariants hold under heavy concurrent write loa
 ### INV-1: CAS uniqueness
 
 - **Test:** 100 concurrent BeginAction requests with the same ActionKey, distributed across 3 instances.
-- **Invariant:** Exactly ONE action record exists. Exactly ONE PROCEED decision issued. All other responses are REPLAY_* or PENDING.
+- **Invariant:** Exactly ONE action record exists. Exactly ONE PROCEED decision issued. All other responses are REPLAY\_\* or PENDING.
 - **Verification:** Query DB directly: `SELECT COUNT(*) FROM actions WHERE action_key = ?` must equal 1.
 
 ### INV-2: Terminal immutability
