@@ -1,0 +1,31 @@
+# Example OpenTelemetry Collector config (placeholder) for v0.1
+#
+# This is NOT production hardened. It exists to prevent doc drift and provide a starting point.
+
+receivers:
+  otlp:
+    protocols:
+      grpc: {}
+      http: {}
+
+processors:
+  batch: {}
+
+exporters:
+  logging:
+    loglevel: info
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging]

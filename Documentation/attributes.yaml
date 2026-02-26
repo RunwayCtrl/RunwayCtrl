@@ -1,0 +1,21 @@
+# Stable attribute keys (placeholder) for RunwayCtrl OTel contract v0.1
+#
+# Keep keys stable; values may evolve.
+# NOTE: Do NOT use high-cardinality IDs (action_key, attempt_id, tenant_id, resource_key)
+# as metric label values.
+
+runwayctrl.decision:
+  type: string
+  description: BeginAction decision (PROCEED | PENDING | REPLAY_SUCCESS | REPLAY_FAILURE | DENY)
+
+runwayctrl.deny_reason:
+  type: string
+  description: Categorical deny reason (bounded set)
+
+runwayctrl.tool:
+  type: string
+  description: Tool name (bounded)
+
+runwayctrl.operation:
+  type: string
+  description: Operation name (bounded)
