@@ -1,7 +1,7 @@
 name: Bug Report
 description: Report a bug in RunwayCtrl
-title: "[Bug]: "
-labels: ["bug", "triage"]
+title: '[Bug]: '
+labels: ['bug', 'triage']
 body:
   - type: markdown
     attributes:
@@ -13,7 +13,7 @@ body:
     attributes:
       label: RunwayCtrl Version
       description: Which version of RunwayCtrl are you using?
-      placeholder: "e.g., 0.1.0 or commit SHA"
+      placeholder: 'e.g., 0.1.0 or commit SHA'
     validations:
       required: true
 
@@ -44,7 +44,7 @@ body:
     attributes:
       label: Bug Description
       description: A clear and concise description of what the bug is.
-      placeholder: "When I call BeginAction with..."
+      placeholder: 'When I call BeginAction with...'
     validations:
       required: true
 
@@ -56,7 +56,7 @@ body:
       value: |
         1. 
         2. 
-        3. 
+        3.
     validations:
       required: true
 
@@ -86,7 +86,7 @@ body:
         - Node.js version: 
         - pnpm version: 
         - Docker version: 
-        - Postgres version: 
+        - Postgres version:
     validations:
       required: false
 

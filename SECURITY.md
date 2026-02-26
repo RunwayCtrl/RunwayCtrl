@@ -3,7 +3,7 @@
 ## Supported Versions
 
 | Version | Supported |
-|---------|-----------|
+| ------- | --------- |
 | v0.1.x  | Yes       |
 
 ---
@@ -32,11 +32,13 @@ If you discover a security vulnerability in RunwayCtrl, please report it respons
 RunwayCtrl is built with security as a foundational concern:
 
 ### Data Minimization
+
 - The ledger stores **hashes and pointers** by default — not raw tool request/response payloads
 - Payload capture requires explicit tenant opt-in
 - See [ADR-0009](Documentation/ADR-0009-payload-capture-stance.md)
 
 ### Tenant Isolation
+
 - Every database table is scoped by `tenant_id`
 - All uniqueness constraints are tenant-scoped
 - API keys are tenant-bound; cross-tenant access is architecturally impossible
@@ -44,18 +46,21 @@ RunwayCtrl is built with security as a foundational concern:
 - See [ADR-0007](Documentation/ADR-0007-multi-tenant-isolation.md)
 
 ### Credential Handling
+
 - API keys are stored as **hashed values** (never plaintext)
 - API keys are returned in plaintext exactly once (at creation) and never again
 - The control plane **never executes tool calls** — eliminating SSRF and credential-forwarding risks
 - Integration credentials (Jira, ServiceNow, GitHub) live in the agent runtime, not the control plane
 
 ### Telemetry Safety
+
 - Telemetry attributes are **allowlisted**, not filtered
 - Only explicitly approved attributes are emitted to the OTel pipeline
 - This prevents accidental PII/secret leaks in traces, metrics, and logs
 - See [OTel Contract](Documentation/02-otel-contract.md)
 
 ### Abuse Prevention
+
 - Per-tenant and per-IP rate limiting
 - Request size and time limits
 - Circuit breakers prevent cascading failures

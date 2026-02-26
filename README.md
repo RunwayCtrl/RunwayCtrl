@@ -48,13 +48,13 @@ Without coordination:
 
 RunwayCtrl provides five testable guarantees:
 
-| # | Guarantee | What it means |
-|---|-----------|---------------|
+| #     | Guarantee                      | What it means                                                                              |
+| ----- | ------------------------------ | ------------------------------------------------------------------------------------------ |
 | **A** | **Effectively-once execution** | Same action attempted multiple times → replay the outcome, never duplicate the side effect |
-| **B** | **Governed retries** | Bounded budgets, jittered backoff, circuit-breaking — no retry storms |
-| **C** | **Bounded concurrency** | TTL leases serialize writes to hot resources — no merge races |
-| **D** | **Explainable runs** | Every action/attempt is reconstructible from the ledger + correlated OTel traces |
-| **E** | **Execution intelligence** | Durable ledger → cost optimization signals, tool efficiency scores, hotspot detection |
+| **B** | **Governed retries**           | Bounded budgets, jittered backoff, circuit-breaking — no retry storms                      |
+| **C** | **Bounded concurrency**        | TTL leases serialize writes to hot resources — no merge races                              |
+| **D** | **Explainable runs**           | Every action/attempt is reconstructible from the ledger + correlated OTel traces           |
+| **E** | **Execution intelligence**     | Durable ledger → cost optimization signals, tool efficiency scores, hotspot detection      |
 
 ---
 
@@ -148,6 +148,7 @@ const result = await rc.execute('jira.create_issue', {
 ```
 
 **Key design decisions:**
+
 - The control plane **never executes tool calls** — agents do. This eliminates SSRF and credential-handling surface.
 - Postgres is the **system of record**. Redis is an optional accelerator, never required for correctness.
 - The ledger stores **hashes and pointers**, not raw payloads — privacy-first by default.
@@ -160,11 +161,11 @@ const result = await rc.execute('jira.create_issue', {
 
 v0.1 ships with three production integrations:
 
-| Integration | Target Audience | Why RunwayCtrl matters |
-|-------------|----------------|----------------------|
-| **Jira Cloud** | Platform engineers, sprint automation | Zero native idempotency on creates. 409 on concurrent transitions with no coordination. New points-based rate limits (March 2026). |
-| **ServiceNow** | Enterprise ITSM, incident management | Zero native idempotency on ALL Table API writes. No API-level locking (GlideMutex is server-side only). JOURNAL fields append on PUT. Shared rate limits. |
-| **GitHub** | Developers, CI/CD automation | No idempotency on PR creation, issues, comments, workflow triggers. Merge races under concurrency. |
+| Integration    | Target Audience                       | Why RunwayCtrl matters                                                                                                                                    |
+| -------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Jira Cloud** | Platform engineers, sprint automation | Zero native idempotency on creates. 409 on concurrent transitions with no coordination. New points-based rate limits (March 2026).                        |
+| **ServiceNow** | Enterprise ITSM, incident management  | Zero native idempotency on ALL Table API writes. No API-level locking (GlideMutex is server-side only). JOURNAL fields append on PUT. Shared rate limits. |
+| **GitHub**     | Developers, CI/CD automation          | No idempotency on PR creation, issues, comments, workflow triggers. Merge races under concurrency.                                                        |
 
 ### SDK Pattern (identical across all integrations)
 
@@ -228,38 +229,38 @@ RunwayCtrl/
 
 Comprehensive documentation lives in [`Documentation/`](Documentation/):
 
-| Document | Purpose |
-|----------|---------|
+| Document                                                         | Purpose                                                   |
+| ---------------------------------------------------------------- | --------------------------------------------------------- |
 | [Project Overview](Documentation/RUNWAYCTRL_PROJECT_OVERVIEW.md) | Canonical "project brain" — guarantees, scope, primitives |
-| [PRD](Documentation/PRD%20Document.md) | Product requirements and success criteria |
-| [Implementation Plan](Documentation/Implementation%20Plan.md) | Phased build plan with gates |
-| [API Contract](Documentation/API%20Contract.md) | Decision semantics, error semantics, idempotency |
-| [OpenAPI Spec](Documentation/openapi.yaml) | Source of truth for all endpoints |
-| [Data Model](Documentation/Data%20Model%20Spec.md) | ERD, table definitions, invariants |
-| [Backend Structure](Documentation/Backend%20Structure.md) | Service boundaries, request lifecycle |
-| [Security Guidelines](Documentation/Security%20Guidelines.md) | Threat model, data handling, controls |
-| [Frontend Guidelines](Documentation/Frontend%20Guidelines.md) | Dashboard UX, design system, components |
-| [Tech Stack](Documentation/Tech%20Stack.md) | Technology choices and rationale |
-| [Error Codes](Documentation/Error%20Codes%20and%20Retry.md) | Error taxonomy, retry semantics |
-| [OTel Contract](Documentation/02-otel-contract.md) | Span naming, attribute allowlist |
-| [ADRs](Documentation/adr-log.md) | Architecture Decision Records |
+| [PRD](Documentation/PRD%20Document.md)                           | Product requirements and success criteria                 |
+| [Implementation Plan](Documentation/Implementation%20Plan.md)    | Phased build plan with gates                              |
+| [API Contract](Documentation/API%20Contract.md)                  | Decision semantics, error semantics, idempotency          |
+| [OpenAPI Spec](Documentation/openapi.yaml)                       | Source of truth for all endpoints                         |
+| [Data Model](Documentation/Data%20Model%20Spec.md)               | ERD, table definitions, invariants                        |
+| [Backend Structure](Documentation/Backend%20Structure.md)        | Service boundaries, request lifecycle                     |
+| [Security Guidelines](Documentation/Security%20Guidelines.md)    | Threat model, data handling, controls                     |
+| [Frontend Guidelines](Documentation/Frontend%20Guidelines.md)    | Dashboard UX, design system, components                   |
+| [Tech Stack](Documentation/Tech%20Stack.md)                      | Technology choices and rationale                          |
+| [Error Codes](Documentation/Error%20Codes%20and%20Retry.md)      | Error taxonomy, retry semantics                           |
+| [OTel Contract](Documentation/02-otel-contract.md)               | Span naming, attribute allowlist                          |
+| [ADRs](Documentation/adr-log.md)                                 | Architecture Decision Records                             |
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology | Why |
-|-------|-----------|-----|
-| **Runtime** | Node.js ≥ 20 | TypeScript-native, async-first, agent ecosystem alignment |
-| **API** | Fastify | Low overhead, schema validation, plugin ecosystem |
-| **Database** | PostgreSQL 16+ | ACID transactions, CAS patterns, tenant isolation via RLS |
-| **Cache** | Redis (optional) | Budget counters, rate-limit hints — never source of truth |
-| **Observability** | OpenTelemetry | Vendor-neutral traces + metrics, execution-aware spans |
-| **SDK** | TypeScript | First-class types, tree-shakeable packages |
-| **Dashboard** | Next.js + Tailwind + shadcn/ui | React ecosystem, dark mode, bento grid layout |
-| **Monorepo** | pnpm workspaces | Fast installs, strict dependency isolation |
-| **CI/CD** | GitHub Actions | Native to our hosting, OIDC-ready |
-| **Testing** | Vitest + MSW + testcontainers | Fast unit tests, deterministic mocks, real Postgres integration tests |
+| Layer             | Technology                     | Why                                                                   |
+| ----------------- | ------------------------------ | --------------------------------------------------------------------- |
+| **Runtime**       | Node.js ≥ 20                   | TypeScript-native, async-first, agent ecosystem alignment             |
+| **API**           | Fastify                        | Low overhead, schema validation, plugin ecosystem                     |
+| **Database**      | PostgreSQL 16+                 | ACID transactions, CAS patterns, tenant isolation via RLS             |
+| **Cache**         | Redis (optional)               | Budget counters, rate-limit hints — never source of truth             |
+| **Observability** | OpenTelemetry                  | Vendor-neutral traces + metrics, execution-aware spans                |
+| **SDK**           | TypeScript                     | First-class types, tree-shakeable packages                            |
+| **Dashboard**     | Next.js + Tailwind + shadcn/ui | React ecosystem, dark mode, bento grid layout                         |
+| **Monorepo**      | pnpm workspaces                | Fast installs, strict dependency isolation                            |
+| **CI/CD**         | GitHub Actions                 | Native to our hosting, OIDC-ready                                     |
+| **Testing**       | Vitest + MSW + testcontainers  | Fast unit tests, deterministic mocks, real Postgres integration tests |
 
 ---
 
