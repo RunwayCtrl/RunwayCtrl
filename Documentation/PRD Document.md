@@ -102,8 +102,7 @@ As apps embed agents “in the background,” tool execution volume becomes larg
 2. Prevent and dampen **retry storms** via budgets, backoff, and circuiting.
 3. Enforce **bounded concurrency** per tool and per resource.
 4. Provide an **append-only attempt ledger** for auditability and replay.
-5. Emit **OTel-native traces/metrics/logs** that link every tool attempt to every trace.
-
+5. Emit **OTel-native traces/metrics/logs** that link every tool attempt to every trace.6. Surface **LLM-powered execution intelligence** (The Hub) — async analysis of aggregated ledger data that detects patterns, flags anomalies, and recommends optimizations.
 ### Non-Goals (explicit)
 
 - Not a workflow engine or orchestrator (we integrate with them).
@@ -233,6 +232,19 @@ As apps embed agents “in the background,” tool execution volume becomes larg
 - Dashboard screen visualizes cost efficiency, tool performance, and trends.
 - Rationale: durability is not just a safety net — it is a data asset that enables cost optimization.
 
+#### FR9 — The Hub (LLM Execution Analysis)
+
+- Async, server-side LLM analysis of aggregated execution data from `execution_daily_stats`.
+- Default provider: OpenAI GPT-5.2 (provider-configurable via `RUNWAYCTRL_HUB_PROVIDER`, `RUNWAYCTRL_HUB_MODEL`).
+- Runs daily after the aggregation worker; stores pre-computed insights in `hub_analyses` table.
+- Serves results via `GET /v1/insights/hub` (tenant-scoped, read-only).
+- Insight types: anomaly detection, optimization recommendations, pattern summaries, failure mode analysis.
+- Each insight has: severity (info/warning/critical), title, summary, recommendation, supporting data points.
+- LLM receives only aggregated statistics — never raw payloads, API keys, or PII.
+- Responses validated with Zod before persistence.
+- Gated by `ENABLE_HUB` feature flag; activates only after `RUNWAYCTRL_HUB_MIN_DATA_DAYS` of meaningful data.
+- See `Documentation/ADR-0012-hub-llm-analysis.md`.
+
 ---
 
 ### 8.2 Non-Functional Requirements
@@ -274,6 +286,11 @@ As apps embed agents “in the background,” tool execution volume becomes larg
 - **Ledger Insights API:**
   - `/v1/insights/cost-summary`, `/v1/insights/tool-efficiency`, `/v1/insights/retry-waste`, `/v1/insights/hotspots`
   - Background aggregation worker (`execution_daily_stats` table)
+- **The Hub (LLM Execution Analysis):**
+  - `GET /v1/insights/hub` — pre-computed LLM analysis of execution patterns
+  - OpenAI GPT-5.2 (provider-configurable); runs daily after aggregation
+  - Gated by `ENABLE_HUB` flag; dormant until sufficient data accumulates
+  - See `Documentation/ADR-0012-hub-llm-analysis.md`
 - **Multi-instance correctness validation:**
   - Chaos test harness (testcontainers-node, 3+ instances, shared Postgres)
   - CI-integrated multi-instance test suite
@@ -374,6 +391,12 @@ As apps embed agents “in the background,” tool execution volume becomes larg
 - Retry waste ratio trending down over time (insights drive governor tuning)
 - Replay savings quantified (cost of actions not re-executed)
 - Tool efficiency scores visible per tenant (actionable optimization signals)
+
+### Hub Intelligence
+
+- Hub adoption: % of tenants with Hub enabled and receiving insights
+- Insight actionability: % of Hub recommendations that lead to governor tuning or config changes
+- Anomaly detection accuracy: flagged patterns correlate with real degradations
 
 ---
 

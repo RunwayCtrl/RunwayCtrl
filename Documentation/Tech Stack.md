@@ -74,6 +74,7 @@ Optional v0.1 accelerator:
 ### 3.2 Background workers
 
 - **Insights aggregation worker** — a scheduled process (cron or pg_cron) that computes daily execution stats from raw ledger data into `execution_daily_stats`. Runs within the control-plane process or as a separate lightweight worker. Emits OTel metrics for health monitoring.
+- **Hub analysis job** — runs after the aggregation worker (daily). Sends aggregated stats to the configured LLM provider, validates the response with Zod, and persists pre-computed insights into the `hub_analyses` table. Gated by the `ENABLE_HUB` feature flag and a minimum-data threshold.
 
 ---
 
@@ -195,6 +196,46 @@ v0.1 packages (as they exist today):
 
 - `@runwayctrl/sdk-core` (placeholder today; will own keying + normalization + small shared types)
 - `@runwayctrl/sdk-node` (planned)
+
+---
+
+## 8.5) The Hub — LLM execution analysis layer
+
+### 8.5.1 What it is
+
+The Hub is an async, server-side intelligence layer that analyzes aggregated execution data from the durable ledger and produces pre-computed, human-readable insights. It runs daily (after the insights aggregation worker), stores its output in a `hub_analyses` table, and serves results via `GET /v1/insights/hub`.
+
+Think: **Stripe Radar for agent execution** — pattern detection, anomaly flagging, and optimization recommendations powered by LLM analysis of execution history.
+
+### 8.5.2 LLM provider
+
+- **Default:** OpenAI GPT-5.2
+- **Provider-configurable:** the Hub is designed to be provider-agnostic. Switch models by changing environment variables.
+
+Environment variables:
+
+| Variable                       | Default   | Notes                                         |
+| ------------------------------ | --------- | --------------------------------------------- |
+| `ENABLE_HUB`                   | `false`   | Feature flag — Hub is dormant until enabled    |
+| `RUNWAYCTRL_HUB_PROVIDER`      | `openai`  | LLM provider identifier                       |
+| `RUNWAYCTRL_HUB_MODEL`         | `gpt-5.2` | Model name                                    |
+| `RUNWAYCTRL_HUB_API_KEY`       | —         | API key for LLM provider (stored in secrets)  |
+| `RUNWAYCTRL_HUB_MIN_DATA_DAYS` | `7`       | Minimum days of data before Hub activates      |
+
+### 8.5.3 Security stance
+
+- The LLM **only** receives aggregated statistics from `execution_daily_stats` — never raw payloads, API keys, PII, tenant secrets, or individual attempt data.
+- LLM responses are validated with Zod before persistence.
+- Hub API key is stored in a secrets manager (never committed, never logged).
+- Hub results are stored tenant-scoped with RLS enforcement.
+- LLM provider endpoint must be allowlisted for egress.
+
+### 8.5.4 Architecture rules
+
+- Hub analysis is **async and pre-computed** — never on the request hot path.
+- Hub is completely optional — the control plane functions identically without it.
+- Hub activates only after `RUNWAYCTRL_HUB_MIN_DATA_DAYS` of meaningful data exist.
+- See `Documentation/ADR-0012-hub-llm-analysis.md` for the full decision record.
 
 ---
 

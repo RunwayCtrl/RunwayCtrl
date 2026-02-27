@@ -65,6 +65,7 @@ erDiagram
   TENANTS ||--o{ GOVERNOR_POLICIES : configures
   TENANTS ||--o{ CIRCUITS : tracks
   TENANTS ||--o{ EXECUTION_DAILY_STATS : aggregates
+  TENANTS ||--o{ HUB_ANALYSES : generates
 
   ACTIONS ||--o{ ATTEMPTS : spawns
   ATTEMPTS ||--o{ ATTEMPT_EVENTS : emits
@@ -204,6 +205,18 @@ erDiagram
     int lease_denials
     int circuit_opens
     timestamptz computed_at
+  }
+
+  HUB_ANALYSES {
+    text tenant_id PK
+    uuid analysis_id PK
+    date analysis_date
+    jsonb insights
+    text model_provider
+    text model_name
+    jsonb input_summary
+    timestamptz generated_at
+    timestamptz created_at
   }
 
 ```
@@ -622,6 +635,58 @@ RETURNING *;
 - RLS policy recommended: `tenant_id = current_setting('app.tenant_id')`.
 - Retention: keep at least 90 days; optionally archive to cold storage for trend analysis.
 - No foreign keys to `actions` or `attempts` (this is a materialized aggregate, not a normalized join target).
+
+---
+
+### 5.10 `hub_analyses`
+
+**Purpose:** Pre-computed LLM analysis of aggregated execution data. Populated by the Hub analysis job (daily, after the aggregation worker). Used by the `GET /v1/insights/hub` read-only API endpoint. See `Documentation/ADR-0012-hub-llm-analysis.md`.
+
+**Columns**
+
+| Column         | Type        | Null | Default  | Notes                                                                   |
+| -------------- | ----------- | ---: | -------- | ----------------------------------------------------------------------- |
+| tenant_id      | text        |   No | —        | Tenant scope                                                            |
+| analysis_id    | uuid        |   No | gen_random_uuid() | Unique analysis identifier                                    |
+| analysis_date  | date        |   No | —        | Date of analysis (one per tenant per day)                               |
+| insights       | jsonb       |   No | —        | Array of insight objects (Zod-validated from LLM response)              |
+| model_provider | text        |   No | —        | LLM provider used (e.g., `openai`)                                     |
+| model_name     | text        |   No | —        | LLM model used (e.g., `gpt-5.2`)                                       |
+| input_summary  | jsonb       |  Yes | null     | Summary of aggregated stats sent to LLM (for auditability)             |
+| generated_at   | timestamptz |   No | now()    | When the LLM response was received                                     |
+| created_at     | timestamptz |   No | now()    | Row creation timestamp                                                  |
+
+**Insight JSON structure** (each element in `insights` array):
+
+```json
+{
+  "severity": "info | warning | critical",
+  "title": "string",
+  "summary": "string",
+  "recommendation": "string",
+  "data_points": [
+    { "label": "string", "value": "string | number" }
+  ]
+}
+```
+
+**Constraints**
+
+- PK: `(tenant_id, analysis_id)`
+- UNIQUE: `(tenant_id, analysis_date)` — one analysis per tenant per day
+- FK: `tenant_id → tenants(tenant_id)`
+
+**Indexes**
+
+- `hub_analyses(tenant_id, analysis_date DESC)` — tenant-scoped latest analysis lookup
+
+**Operational notes**
+
+- Populated by INSERT (one row per analysis run). If re-run on the same day, UPSERT on `(tenant_id, analysis_date)`.
+- RLS policy recommended: `tenant_id = current_setting('app.tenant_id')`.
+- Retention: keep at least 90 days; older analyses can be archived.
+- `input_summary` stores what was sent to the LLM for audit trails (aggregated stats only, no PII).
+- No foreign keys to `execution_daily_stats` (this is a derived output, not a normalized join target).
 
 ---
 

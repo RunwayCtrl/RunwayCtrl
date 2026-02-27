@@ -259,7 +259,23 @@ Any operation that changes semantics MUST be atomic:
 - Insights queries MUST NOT join or access data from other tenants.
 - Analytics data is aggregate/statistical — but still tenant-confidential.
 
-### 7.5 Multi-instance correctness (MUST)
+### 7.5 The Hub — LLM analysis security (MUST)
+
+The Hub sends aggregated execution data to an LLM provider for analysis. This introduces a data egress boundary that must be tightly controlled.
+
+- **Data minimization (MUST):** The LLM MUST only receive aggregated statistics from `execution_daily_stats` — never raw payloads, API keys, PII, tenant secrets, individual action_keys, attempt_ids, or resource_keys.
+- **Prompt construction (MUST):** Prompts sent to the LLM MUST be constructed server-side from pre-defined templates. User-supplied strings MUST NOT be interpolated into prompts.
+- **Response validation (MUST):** LLM responses MUST be validated with Zod before persistence. Malformed responses MUST be rejected and logged (not stored).
+- **Credential handling (MUST):** The LLM provider API key (`RUNWAYCTRL_HUB_API_KEY`) MUST be stored in a secrets manager. It MUST NOT be committed to git, logged, or included in telemetry.
+- **Tenant isolation (MUST):** Hub analysis results stored in `hub_analyses` MUST be tenant-scoped. The `hub_analyses` table MUST enforce RLS.
+- **Egress control (MUST):** The LLM provider endpoint MUST be allowlisted for egress. No other external endpoints may be contacted by the Hub.
+- **Feature gating (MUST):** Hub is gated by `ENABLE_HUB` feature flag. When disabled, no data is sent to any LLM provider.
+- **Audit trail (SHOULD):** `input_summary` column in `hub_analyses` stores what was sent to the LLM for audit purposes (aggregated stats only).
+- **Rate limiting (SHOULD):** Hub analysis runs are bounded (daily by default). The system MUST NOT allow unbounded LLM calls.
+
+See `Documentation/ADR-0012-hub-llm-analysis.md` for the full decision record.
+
+### 7.6 Multi-instance correctness (MUST)
 
 - All tenant isolation guarantees MUST hold when multiple control-plane instances share the same Postgres.
 - Multi-instance chaos tests (Phase 8A) MUST include a tenant isolation category: ensure that concurrent requests from different tenants on different instances never cross boundaries.

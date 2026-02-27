@@ -971,6 +971,56 @@ CREATE INDEX idx_exec_stats_tenant_date
 - [ ] API client methods in console for all `/v1/insights/*` endpoints
 - [ ] Placeholder screen in Phase 10 dashboard
 
+## P8B.6 The Hub — LLM execution analysis
+
+> See `Documentation/ADR-0012-hub-llm-analysis.md` for the decision record.
+
+- [ ] **Schema migration:** create `hub_analyses` table (see Data Model Spec Section 5.10)
+  - [ ] Columns: `tenant_id`, `analysis_id`, `analysis_date`, `insights` (jsonb), `model_provider`, `model_name`, `input_summary` (jsonb), `generated_at`, `created_at`
+  - [ ] PK: `(tenant_id, analysis_id)`
+  - [ ] Unique: `(tenant_id, analysis_date)` — one analysis per tenant per day
+  - [ ] FK: `tenant_id → tenants(tenant_id)`
+  - [ ] RLS policy: `tenant_id = current_setting('app.tenant_id')`
+- [ ] **Hub provider adapter** (`hub-provider.ts`):
+  - [ ] Abstract provider interface: `analyze(prompt: string): Promise<string>`
+  - [ ] OpenAI implementation (default): uses `RUNWAYCTRL_HUB_API_KEY`, `RUNWAYCTRL_HUB_MODEL`
+  - [ ] Provider resolution from `RUNWAYCTRL_HUB_PROVIDER` env var
+- [ ] **Hub analyzer job** (`hub-analyzer.ts`):
+  - [ ] Read aggregated stats from `execution_daily_stats` for the tenant
+  - [ ] Build structured prompt with stats summary (never raw payloads/keys/PII)
+  - [ ] Call LLM provider via adapter
+  - [ ] Validate response with Zod schema (array of insights with severity/title/summary/recommendation/data_points)
+  - [ ] Persist validated insights to `hub_analyses`
+  - [ ] Skip if `ENABLE_HUB=false` or insufficient data (`< RUNWAYCTRL_HUB_MIN_DATA_DAYS`)
+- [ ] **Hub service** (`hub-service.ts`):
+  - [ ] `getLatestAnalysis(tenantId, options?)` — reads from `hub_analyses`
+  - [ ] Returns pre-computed insights (never calls LLM at request time)
+- [ ] **Hub API endpoint:**
+  - [ ] `GET /v1/insights/hub` — tenant-scoped, read-only
+  - [ ] Query params: `from?`, `to?`
+  - [ ] Response: `{ analysis_date, insights: [...], model_provider, model_name, generated_at }`
+  - [ ] 404 if Hub is disabled or no analysis exists yet
+- [ ] **Hub Zod schemas** (in `packages/shared`):
+  - [ ] `HubInsightSchema` (severity, title, summary, recommendation, data_points)
+  - [ ] `HubAnalysisResponseSchema` (analysis_date, insights, model_provider, model_name, generated_at)
+- [ ] **OTel instrumentation:**
+  - [ ] `runwayctrl.hub.analysis.duration_ms` (histogram)
+  - [ ] `runwayctrl.hub.analysis.insights_generated` (counter)
+  - [ ] `runwayctrl.hub.query.duration_ms` (histogram)
+  - [ ] Spans: `runwayctrl.hub.analyze`, `runwayctrl.hub.query`
+- [ ] **Feature flag:** `ENABLE_HUB` (default `false`)
+  - [ ] Hub job is a no-op when disabled
+  - [ ] Hub endpoint returns 404 with clear message when disabled
+- [ ] **Configuration:**
+  - [ ] `RUNWAYCTRL_HUB_PROVIDER` (default: `openai`)
+  - [ ] `RUNWAYCTRL_HUB_MODEL` (default: `gpt-5.2`)
+  - [ ] `RUNWAYCTRL_HUB_API_KEY` (required when Hub enabled)
+  - [ ] `RUNWAYCTRL_HUB_MIN_DATA_DAYS` (default: `7`)
+- [ ] **Tests:**
+  - [ ] Unit tests: Zod validation of LLM responses, prompt construction, threshold gating
+  - [ ] Integration tests: Hub analyzer writes valid analysis to `hub_analyses`; Hub endpoint serves correct data
+  - [ ] Provider adapter mock: test with deterministic LLM response
+
 ## P8B Gate: Definition of Done
 
 - [ ] `execution_daily_stats` table created with RLS
@@ -978,6 +1028,11 @@ CREATE INDEX idx_exec_stats_tenant_date
 - [ ] All 4 insight endpoints return correct data for test tenant
 - [ ] OTel metrics emitted for aggregation and query paths
 - [ ] Console wireframe approved and API client ready
+- [ ] `hub_analyses` table created with RLS
+- [ ] Hub analyzer job produces valid insights when enabled (with mock LLM in tests)
+- [ ] `GET /v1/insights/hub` returns correct data for test tenant
+- [ ] Hub is correctly gated by `ENABLE_HUB` flag and minimum-data threshold
+- [ ] Hub OTel metrics emitted for analysis and query paths
 
 ## P8 Gate: Definition of Done
 
@@ -1648,6 +1703,13 @@ Reference (canonical for Phase 9):
   - [ ] Per-provider breakdown: which integration is causing the most 429s?
   - [ ] "Rate limit efficiency" metric: how many 429s did RunwayCtrl prevent vs. how many leaked through?
 - [ ] All data fetched from `/v1/insights/*` endpoints (P8B)
+- [ ] **NEW: Hub Insights Panel:**
+  - [ ] Card list showing pre-computed LLM analysis from `GET /v1/insights/hub`
+  - [ ] Each card: severity badge (info=blue, warning=amber, critical=red), title, summary
+  - [ ] Expand card to see full recommendation and supporting data points
+  - [ ] Most recent analysis date displayed at top ("Last analyzed: YYYY-MM-DD")
+  - [ ] Empty/dormant state: "The Hub is gathering data — insights will appear after [N] days of execution history" (when Hub is enabled but below threshold)
+  - [ ] Disabled state: "The Hub is not enabled. Enable it to receive LLM-powered execution insights." (when `ENABLE_HUB=false`)
 
 ## P10 Gate: Definition of Done
 

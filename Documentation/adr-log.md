@@ -65,6 +65,7 @@ ADRs prevent “architectural amnesia” and make onboarding and refactors sane.
 | ADR-0009 | Payload capture stance: hashes/pointers default; opt-in artifacts              | ACCEPTED | January 29, 2026 | Platform | PRD; Security Guidelines; Backend Structure          |
 | ADR-0010 | Ledger Insights: analytics + cost optimization from durable data               | ACCEPTED | January 21, 2026 | Platform | Data Model Spec; Observability; OTel Contract        |
 | ADR-0011 | Multi-instance correctness + chaos validation harness                          | ACCEPTED | January 21, 2026 | Platform | Infra Blueprint; Security Guidelines; State Machines |
+| ADR-0012 | The Hub: LLM-powered execution analysis from ledger data                       | ACCEPTED | January 29, 2026 | Platform | Data Model Spec; Observability; OTel Contract; Security Guidelines |
 
 ---
 
@@ -94,3 +95,4 @@ ADRs prevent “architectural amnesia” and make onboarding and refactors sane.
 - `Documentation/ADR-0009-payload-capture-stance.md`
 - `Documentation/ADR-0010-ledger-insights-analytics.md`
 - `Documentation/ADR-0011-multi-instance-chaos-validation.md`
+- `Documentation/ADR-0012-hub-llm-analysis.md`

@@ -19,3 +19,15 @@ runwayctrl.tool:
 runwayctrl.operation:
   type: string
   description: Operation name (bounded)
+
+runwayctrl.hub.provider:
+  type: string
+  description: Hub LLM provider name (e.g., openai). Low cardinality.
+
+runwayctrl.hub.model:
+  type: string
+  description: Hub LLM model name (e.g., gpt-5.2). Low cardinality.
+
+runwayctrl.hub.insights_count:
+  type: int
+  description: Number of insights generated per Hub analysis run. Low cardinality.

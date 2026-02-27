@@ -96,6 +96,7 @@ If the UI isn’t answering one of those, it’s probably decoration.
   - Cost efficiency, tool performance, trends, hotspots
   - Rate limit impact analysis
   - Per-provider breakout views
+  - **The Hub**: LLM-powered execution analysis (anomalies, recommendations, pattern summaries)
 - **Policies**
   - Budgets, backoff, circuiting (view + versioning later)
 - **Resources**
@@ -275,6 +276,27 @@ A cost optimization and execution intelligence dashboard that mines the durable 
   - "Rate limit efficiency" metric: 429s prevented by RunwayCtrl governor vs. 429s that leaked through
   - Trend: rate limit events over time with provider color-coding
 
+- **NEW — RunwayCtrl Hub Panel (LLM Execution Analysis):**
+  > Data source: `GET /v1/insights/hub` (pre-computed daily by The Hub — see `Documentation/ADR-0012-hub-llm-analysis.md`).
+
+  - **Layout:** vertical card list below the Rate Limit Impact Panel.
+  - **Each insight card:**
+    - Severity badge: `info` (blue), `warning` (amber), `critical` (red)
+    - Title (bold, single line)
+    - Summary (2–3 sentence explanation)
+    - Expand to reveal: full recommendation text + supporting data points (stats that drove the insight)
+  - **Header:** "Last analyzed: YYYY-MM-DD" + model provider/name badge (subtle, e.g., "GPT-5.2")
+  - **States:**
+    - Populated: card list sorted by severity (critical first)
+    - Empty/dormant: "The Hub is gathering data — insights will appear after [N] days of execution history." (glass card with dimmed icon)
+    - Disabled: "The Hub is not enabled. Enable `ENABLE_HUB` to receive LLM-powered execution insights." (glass card with lock icon)
+    - Error: "Hub analysis failed on [date]. Previous insights shown." (with stale indicator)
+  - **UX notes:**
+    - Cards use glassmorphism depth (consistent with bento grid)
+    - Severity badges use the same color semantics as status chips (SUCCESS color = info, UNKNOWN color = warning, FAILURE color = critical)
+    - No real-time LLM calls — all data is pre-computed and cached
+    - `prefers-reduced-motion` disables any expand/collapse animations
+
 **UX notes:**
 
 - Time range selector (7d, 30d, 90d) applies globally to all panels.
@@ -445,7 +467,7 @@ Attach correlation IDs to every UI-initiated API call.
 
 ## 13) Rollout strategy (practical)
 
-- v0.1: read-only console (Actions, Attempts, Scoreboard, Integration Health, Insights) — dark mode first, bento layout, command palette
+- v0.1: read-only console (Actions, Attempts, Scoreboard, Integration Health, Insights, Hub) — dark mode first, bento layout, command palette
 - v0.2: design partner console (multi-tenant views, policy visibility, expanded analytics)
 - v0.3: policy editing with versioning + approvals + audit trails
 - v0.4: real-time WebSocket updates, advanced anomaly detection in Insights

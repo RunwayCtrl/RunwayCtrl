@@ -147,6 +147,7 @@ Contract rule:
 - `GET /v1/insights/tool-efficiency` — Per-tool success rate, latency, retry cost.
 - `GET /v1/insights/retry-waste` — Wasted attempts and denial breakdown.
 - `GET /v1/insights/hotspots` — Top tools/actions by waste and contention.
+- `GET /v1/insights/hub` — Pre-computed LLM execution analysis (The Hub). Returns anomaly detection, optimization recommendations, and pattern summaries generated daily from aggregated ledger data. Gated by `ENABLE_HUB` feature flag; returns 404 when disabled or no analysis exists.
 
 Common query parameters: `from` (date), `to` (date), `tool?`, `action?`, `top_n?`.
 

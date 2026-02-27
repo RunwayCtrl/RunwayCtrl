@@ -18,6 +18,7 @@ tags:
   - name: Actions
   - name: Attempts
   - name: Leases
+  - name: Insights
   - name: Admin
   - name: Meta
 security:
@@ -472,6 +473,67 @@ components:
     RenewLeaseResponse:
       $ref: "#/components/schemas/AcquireLeaseResponse"
 
+    # ---- Hub (LLM Execution Analysis) schemas ----
+    HubInsight:
+      type: object
+      required: [severity, title, summary, recommendation]
+      additionalProperties: false
+      properties:
+        severity:
+          type: string
+          enum: [info, warning, critical]
+          description: Insight severity level.
+        title:
+          type: string
+          maxLength: 256
+          description: Short insight title.
+        summary:
+          type: string
+          maxLength: 2048
+          description: 2-3 sentence explanation.
+        recommendation:
+          type: string
+          maxLength: 2048
+          description: Actionable recommendation.
+        data_points:
+          type: array
+          items:
+            type: object
+            required: [label, value]
+            additionalProperties: false
+            properties:
+              label:
+                type: string
+                maxLength: 128
+              value:
+                oneOf:
+                  - type: string
+                  - type: number
+          description: Supporting data that drove the insight.
+
+    HubAnalysisResponse:
+      type: object
+      required: [analysis_date, insights, model_provider, model_name, generated_at]
+      additionalProperties: false
+      properties:
+        analysis_date:
+          type: string
+          format: date
+          description: Date of the analysis.
+        insights:
+          type: array
+          items:
+            $ref: "#/components/schemas/HubInsight"
+          description: Array of pre-computed insights.
+        model_provider:
+          type: string
+          description: LLM provider used (e.g., openai).
+        model_name:
+          type: string
+          description: LLM model used (e.g., gpt-5.2).
+        generated_at:
+          $ref: "#/components/schemas/ISODateTime"
+
 paths:
   /healthz:
     get:
@@ -798,6 +860,67 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/RenewLeaseResponse" }
+        "401":
+          description: Unauthorized
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+        "500":
+          description: Internal error
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+
+  # ---- Internal/Admin endpoints (optional; may be separate service later) ----
+
+  # ---- Insights endpoints (read-only analytics) ----
+  /v1/insights/hub:
+    get:
+      tags: [Insights]
+      summary: Get Hub analysis (LLM execution insights)
+      description: |
+        Returns the latest pre-computed LLM analysis of execution patterns for the tenant.
+        The Hub runs daily after the aggregation worker and produces anomaly detection,
+        optimization recommendations, and pattern summaries from aggregated ledger data.
+        Returns 404 if Hub is disabled or no analysis exists yet.
+        See ADR-0012 for the decision record.
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Start date filter (inclusive).
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+          description: End date filter (inclusive).
+      responses:
+        "200":
+          description: Hub analysis returned
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HubAnalysisResponse"
+        "404":
+          description: Hub is disabled or no analysis exists
+          headers:
+            X-Request-Id:
+              $ref: "#/components/headers/X-Request-Id"
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
         "401":
           description: Unauthorized
           headers:

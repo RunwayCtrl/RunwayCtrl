@@ -205,6 +205,27 @@ Metrics MUST:
   - labels: `endpoint` (`cost_summary`, `tool_efficiency`, `retry_waste`, `hotspots`)
   - Measures: response time of each insights API query.
 
+### 6.5 Hub metrics (Phase 8B)
+
+- `runwayctrl.hub.analysis.duration_ms` (histogram)
+  - labels: `provider`, `model`
+  - Measures: wall-clock time of each Hub LLM analysis run (prompt construction + LLM call + validation + persistence).
+- `runwayctrl.hub.analysis.insights_generated` (counter)
+  - labels: `provider`, `model`, `severity` (`info`, `warning`, `critical`)
+  - Measures: total insights produced per Hub analysis run.
+- `runwayctrl.hub.query.duration_ms` (histogram)
+  - labels: none
+  - Measures: response time of `GET /v1/insights/hub` endpoint.
+
+### 6.6 Hub spans (Phase 8B)
+
+- `runwayctrl.hub.analyze`
+  - Wraps each Hub analysis job execution.
+  - Attributes: `runwayctrl.hub.provider`, `runwayctrl.hub.model`, `runwayctrl.hub.insights_count`.
+- `runwayctrl.hub.query`
+  - Wraps each `GET /v1/insights/hub` API request.
+  - Attributes: `runwayctrl.hub.provider`.
+
 See `03-metrics-catalog.md` for a full registry.
 
 ---

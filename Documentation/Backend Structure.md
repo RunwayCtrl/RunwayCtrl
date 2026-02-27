@@ -70,7 +70,8 @@ It covers:
       /ledger           # repository layer (DB reads/writes)
       /auth             # API keys, tenant resolution, RBAC (later)
       /observability    # OTel wiring, metrics, logging correlation
-      /analytics        # Ledger Insights: aggregation worker, insights queries, insights service
+        /analytics        # Ledger Insights: aggregation worker, insights queries, insights service, Hub analyzer
+        /hub              # The Hub: LLM analysis job, hub service, provider adapter
       /config           # env parsing, defaults, feature flags
       /errors           # error classes, mapping to HTTP, taxonomy
       /utils            # hashing, normalization, time, ids
@@ -129,6 +130,7 @@ Orchestrate one “thing the system does,” e.g.:
 - `AcquireLeaseService`
 - `GetActionStatusService`
 - `InsightsService` (cost summary, tool efficiency, retry waste, hotspots — reads from `execution_daily_stats`)
+- `HubService` (LLM-powered execution analysis — reads from `execution_daily_stats`, writes to `hub_analyses`, serves `GET /v1/insights/hub`)
 
 Services:
 
@@ -178,11 +180,16 @@ Read-only intelligence layer that mines the durable ledger:
 - `aggregation-worker.ts` — scheduled background job (cron or pg_cron) that computes daily stats from raw ledger data into `execution_daily_stats`.
 - `insights-queries.ts` — parameterized SQL for aggregation and insight queries.
 - `insights-service.ts` — business logic for the `/v1/insights/*` API endpoints.
+- `hub-analyzer.ts` — orchestrates the Hub analysis job: gathers aggregated stats, sends prompt to LLM provider, validates response with Zod, persists to `hub_analyses`. Runs after the aggregation worker daily.
+- `hub-service.ts` — business logic for the `GET /v1/insights/hub` endpoint (reads pre-computed insights from `hub_analyses`).
+- `hub-provider.ts` — provider adapter abstraction for LLM calls (default: OpenAI GPT-5.2; configurable via `RUNWAYCTRL_HUB_PROVIDER`).
 
 Key rules:
 
 - Analytics queries NEVER touch the hot write path (actions/attempts tables) at request time.
 - All insight API reads come from `execution_daily_stats` (pre-aggregated).
+- Hub analysis reads from `execution_daily_stats` and writes to `hub_analyses` — never touches the hot write path.
+- Hub is gated by `ENABLE_HUB` feature flag; inactive when disabled.
 - Aggregation runs during off-peak hours; is idempotent (UPSERT).
 - Emits OTel metrics: `runwayctrl.insights.aggregation.duration_ms`, `runwayctrl.insights.aggregation.rows_computed`.
 - Exposes `/internal/insights/health` for worker liveness.
@@ -253,6 +260,8 @@ Implementation:
 - `LeaseRepo.acquire(...)`
 - `EventRepo.append(...)`
 - `InsightsRepo.queryStats(...)` (read-only, from `execution_daily_stats`)
+- `HubRepo.getLatestAnalysis(...)` (read-only, from `hub_analyses`)
+- `HubRepo.saveAnalysis(...)` (write, to `hub_analyses`)
 
 ### 6.3 Background workers
 
@@ -263,6 +272,14 @@ Implementation:
   - Must not hold long-running transactions on the write tables.
   - Emits OTel spans and metrics for monitoring.
   - Failure mode: if aggregation fails, stale data persists (safe degradation — insights are never authoritative for correctness).
+
+- **Hub analysis job** (`/hub/hub-analyzer.ts`):
+  - Runs after the aggregation worker (daily, configurable).
+  - Reads aggregated stats from `execution_daily_stats`; sends a structured prompt to the configured LLM provider.
+  - Validates LLM response with Zod; persists to `hub_analyses`.
+  - Gated by `ENABLE_HUB` feature flag and `RUNWAYCTRL_HUB_MIN_DATA_DAYS` threshold.
+  - Emits OTel spans (`runwayctrl.hub.analyze`) and metrics (`runwayctrl.hub.analysis.duration_ms`, `runwayctrl.hub.analysis.insights_generated`).
+  - Failure mode: if Hub analysis fails, stale or empty insights persist — no impact on correctness.
 
 All repos accept:
 
@@ -283,6 +300,7 @@ All repos accept:
 - `attempt_events`
 - `leases`
 - `execution_daily_stats` (analytics aggregates — see Data Model Spec Section 5.9)
+- `hub_analyses` (Hub LLM analysis results — see Data Model Spec Section 5.10)
 - `policies` (optional v0.1; can hardcode defaults initially)
 - `circuits` (optional; can embed in policies or derive)
 
@@ -383,6 +401,7 @@ Histograms:
 - `ENABLE_CIRCUIT_BREAKER`
 - `ENABLE_LEASES`
 - `ENABLE_PAYLOAD_CAPTURE` (default false)
+- `ENABLE_HUB` (default false — The Hub LLM analysis layer)
 
 Keep flags server-side; do not expose to untrusted clients.
 
