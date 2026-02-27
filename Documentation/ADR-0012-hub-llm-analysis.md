@@ -1,13 +1,13 @@
 # ADR-0012 — The Hub: LLM-powered execution analysis from ledger data
 
-| Field  | Value                                                                |
-| ------ | -------------------------------------------------------------------- |
-| ADR ID | ADR-0012                                                             |
-| Title  | The Hub: LLM-powered execution analysis from ledger data             |
-| Status | ACCEPTED                                                             |
-| Date   | February 27, 2026                                                    |
-| Owners | Platform                                                             |
-| Tags   | analytics, insights, llm, intelligence, hub                         |
+| Field  | Value                                                    |
+| ------ | -------------------------------------------------------- |
+| ADR ID | ADR-0012                                                 |
+| Title  | The Hub: LLM-powered execution analysis from ledger data |
+| Status | ACCEPTED                                                 |
+| Date   | February 27, 2026                                        |
+| Owners | Platform                                                 |
+| Tags   | analytics, insights, llm, intelligence, hub              |
 
 ---
 

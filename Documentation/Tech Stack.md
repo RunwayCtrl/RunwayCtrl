@@ -214,13 +214,13 @@ Think: **Stripe Radar for agent execution** — pattern detection, anomaly flagg
 
 Environment variables:
 
-| Variable                       | Default   | Notes                                         |
-| ------------------------------ | --------- | --------------------------------------------- |
-| `ENABLE_HUB`                   | `false`   | Feature flag — Hub is dormant until enabled    |
-| `RUNWAYCTRL_HUB_PROVIDER`      | `openai`  | LLM provider identifier                       |
-| `RUNWAYCTRL_HUB_MODEL`         | `gpt-5.2` | Model name                                    |
-| `RUNWAYCTRL_HUB_API_KEY`       | —         | API key for LLM provider (stored in secrets)  |
-| `RUNWAYCTRL_HUB_MIN_DATA_DAYS` | `7`       | Minimum days of data before Hub activates      |
+| Variable                       | Default   | Notes                                        |
+| ------------------------------ | --------- | -------------------------------------------- |
+| `ENABLE_HUB`                   | `false`   | Feature flag — Hub is dormant until enabled  |
+| `RUNWAYCTRL_HUB_PROVIDER`      | `openai`  | LLM provider identifier                      |
+| `RUNWAYCTRL_HUB_MODEL`         | `gpt-5.2` | Model name                                   |
+| `RUNWAYCTRL_HUB_API_KEY`       | —         | API key for LLM provider (stored in secrets) |
+| `RUNWAYCTRL_HUB_MIN_DATA_DAYS` | `7`       | Minimum days of data before Hub activates    |
 
 ### 8.5.3 Security stance
 

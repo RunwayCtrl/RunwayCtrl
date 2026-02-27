@@ -644,17 +644,17 @@ RETURNING *;
 
 **Columns**
 
-| Column         | Type        | Null | Default  | Notes                                                                   |
-| -------------- | ----------- | ---: | -------- | ----------------------------------------------------------------------- |
-| tenant_id      | text        |   No | —        | Tenant scope                                                            |
-| analysis_id    | uuid        |   No | gen_random_uuid() | Unique analysis identifier                                    |
-| analysis_date  | date        |   No | —        | Date of analysis (one per tenant per day)                               |
-| insights       | jsonb       |   No | —        | Array of insight objects (Zod-validated from LLM response)              |
-| model_provider | text        |   No | —        | LLM provider used (e.g., `openai`)                                     |
-| model_name     | text        |   No | —        | LLM model used (e.g., `gpt-5.2`)                                       |
-| input_summary  | jsonb       |  Yes | null     | Summary of aggregated stats sent to LLM (for auditability)             |
-| generated_at   | timestamptz |   No | now()    | When the LLM response was received                                     |
-| created_at     | timestamptz |   No | now()    | Row creation timestamp                                                  |
+| Column         | Type        | Null | Default           | Notes                                                      |
+| -------------- | ----------- | ---: | ----------------- | ---------------------------------------------------------- |
+| tenant_id      | text        |   No | —                 | Tenant scope                                               |
+| analysis_id    | uuid        |   No | gen_random_uuid() | Unique analysis identifier                                 |
+| analysis_date  | date        |   No | —                 | Date of analysis (one per tenant per day)                  |
+| insights       | jsonb       |   No | —                 | Array of insight objects (Zod-validated from LLM response) |
+| model_provider | text        |   No | —                 | LLM provider used (e.g., `openai`)                         |
+| model_name     | text        |   No | —                 | LLM model used (e.g., `gpt-5.2`)                           |
+| input_summary  | jsonb       |  Yes | null              | Summary of aggregated stats sent to LLM (for auditability) |
+| generated_at   | timestamptz |   No | now()             | When the LLM response was received                         |
+| created_at     | timestamptz |   No | now()             | Row creation timestamp                                     |
 
 **Insight JSON structure** (each element in `insights` array):
 
@@ -664,9 +664,7 @@ RETURNING *;
   "title": "string",
   "summary": "string",
   "recommendation": "string",
-  "data_points": [
-    { "label": "string", "value": "string | number" }
-  ]
+  "data_points": [{ "label": "string", "value": "string | number" }]
 }
 ```
 

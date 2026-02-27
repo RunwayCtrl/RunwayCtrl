@@ -103,6 +103,7 @@ As apps embed agents “in the background,” tool execution volume becomes larg
 3. Enforce **bounded concurrency** per tool and per resource.
 4. Provide an **append-only attempt ledger** for auditability and replay.
 5. Emit **OTel-native traces/metrics/logs** that link every tool attempt to every trace.6. Surface **LLM-powered execution intelligence** (The Hub) — async analysis of aggregated ledger data that detects patterns, flags anomalies, and recommends optimizations.
+
 ### Non-Goals (explicit)
 
 - Not a workflow engine or orchestrator (we integrate with them).

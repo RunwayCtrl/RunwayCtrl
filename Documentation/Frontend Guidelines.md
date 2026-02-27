@@ -277,8 +277,8 @@ A cost optimization and execution intelligence dashboard that mines the durable 
   - Trend: rate limit events over time with provider color-coding
 
 - **NEW — RunwayCtrl Hub Panel (LLM Execution Analysis):**
-  > Data source: `GET /v1/insights/hub` (pre-computed daily by The Hub — see `Documentation/ADR-0012-hub-llm-analysis.md`).
 
+  > Data source: `GET /v1/insights/hub` (pre-computed daily by The Hub — see `Documentation/ADR-0012-hub-llm-analysis.md`).
   - **Layout:** vertical card list below the Rate Limit Impact Panel.
   - **Each insight card:**
     - Severity badge: `info` (blue), `warning` (amber), `critical` (red)
