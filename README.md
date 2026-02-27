@@ -139,7 +139,12 @@ const result = await rc.execute('jira.create_issue', {
 │  ┌─────────────────────▼──────────────────────────┐  │
 │  │         Durable Ledger (Postgres)               │  │
 │  │  actions · attempts · events · leases · stats   │  │
-│  └─────────────────────────────────────────────────┘  │
+│  └─────────────────────┬───────────────────────────┘  │
+│                        │                              │
+│  ┌─────────────────────▼──────────────────────────┐  │
+│  │     The Hub (LLM Analysis — GPT-5.2)           │  │
+│  │  pattern detection · cost insights · anomalies  │  │
+│  └─────────────────────┬───────────────────────────┘  │
 │                        │                              │
 │  ┌─────────────────────▼──────────────────────────┐  │
 │  │         OpenTelemetry Pipeline                   │  │
@@ -207,6 +212,7 @@ RunwayCtrl/
 │   │       ├── auth/           # API keys, tenant resolution
 │   │       ├── observability/  # OTel wiring
 │   │       ├── analytics/      # Ledger Insights
+│   │       ├── hub/            # The Hub — LLM-powered execution analysis
 │   │       └── migrations/     # SQL migrations
 │   └── console/                # Next.js dashboard (read-only, v0.1)
 ├── packages/
@@ -250,18 +256,19 @@ Comprehensive documentation lives in [`Documentation/`](Documentation/):
 
 ## Tech Stack
 
-| Layer             | Technology                     | Why                                                                   |
-| ----------------- | ------------------------------ | --------------------------------------------------------------------- |
-| **Runtime**       | Node.js ≥ 20                   | TypeScript-native, async-first, agent ecosystem alignment             |
-| **API**           | Fastify                        | Low overhead, schema validation, plugin ecosystem                     |
-| **Database**      | PostgreSQL 16+                 | ACID transactions, CAS patterns, tenant isolation via RLS             |
-| **Cache**         | Redis (optional)               | Budget counters, rate-limit hints — never source of truth             |
-| **Observability** | OpenTelemetry                  | Vendor-neutral traces + metrics, execution-aware spans                |
-| **SDK**           | TypeScript                     | First-class types, tree-shakeable packages                            |
-| **Dashboard**     | Next.js + Tailwind + shadcn/ui | React ecosystem, dark mode, bento grid layout                         |
-| **Monorepo**      | pnpm workspaces                | Fast installs, strict dependency isolation                            |
-| **CI/CD**         | GitHub Actions                 | Native to our hosting, OIDC-ready                                     |
-| **Testing**       | Vitest + MSW + testcontainers  | Fast unit tests, deterministic mocks, real Postgres integration tests |
+| Layer             | Technology                     | Why                                                                         |
+| ----------------- | ------------------------------ | --------------------------------------------------------------------------- |
+| **Runtime**       | Node.js ≥ 20                   | TypeScript-native, async-first, agent ecosystem alignment                   |
+| **API**           | Fastify                        | Low overhead, schema validation, plugin ecosystem                           |
+| **Database**      | PostgreSQL 16+                 | ACID transactions, CAS patterns, tenant isolation via RLS                   |
+| **Cache**         | Redis (optional)               | Budget counters, rate-limit hints — never source of truth                   |
+| **Observability** | OpenTelemetry                  | Vendor-neutral traces + metrics, execution-aware spans                      |
+| **SDK**           | TypeScript                     | First-class types, tree-shakeable packages                                  |
+| **Dashboard**     | Next.js + Tailwind + shadcn/ui | React ecosystem, dark mode, bento grid layout                               |
+| **Monorepo**      | pnpm workspaces                | Fast installs, strict dependency isolation                                  |
+| **CI/CD**         | GitHub Actions                 | Native to our hosting, OIDC-ready                                           |
+| **LLM (Hub)**     | OpenAI GPT-5.2 (configurable)  | Async execution analysis — pattern detection, cost insights, anomaly alerts |
+| **Testing**       | Vitest + MSW + testcontainers  | Fast unit tests, deterministic mocks, real Postgres integration tests       |
 
 ---
 
@@ -286,6 +293,9 @@ GET /v1/insights/cost-summary
 GET /v1/insights/tool-efficiency
 GET /v1/insights/retry-waste
 GET /v1/insights/hotspots
+
+# The Hub (LLM-powered execution analysis)
+GET /v1/insights/hub
 ```
 
 Full API reference: [`Documentation/openapi.yaml`](Documentation/openapi.yaml)
