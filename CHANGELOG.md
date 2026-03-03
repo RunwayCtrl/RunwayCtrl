@@ -4,6 +4,20 @@ All notable changes to RunwayCtrl are documented in this file.
 
 This project aims to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html). Release entries are managed via Changesets.
 
+## Phase 0 (v0.0.1-phase0)
+
+### Added (Phase 0)
+
+- Monorepo scaffolding with pnpm workspaces and shared TypeScript configuration.
+- Local dev environment via Docker Compose (Postgres, plus optional Redis and an optional OTel Collector).
+- Minimal, runnable control-plane dev server with a `/healthz` endpoint.
+- Real `db:migrate` and `db:seed` scripts (Phase 0 seed is a canary; dev tenant/API key seed is deferred).
+
+### Changed (Phase 0)
+
+- CI baseline now runs formatting, lint, tests, and workspace build/typecheck, and applies DB migrations.
+- Conventional Commits are enforced (local hook + CI gate for PR titles).
+
 ## 0.1.1
 
 ### Patch Changes
