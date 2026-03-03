@@ -488,7 +488,7 @@ _Status: checked off as complete as of 2026-03-02 (repo work verified + owner co
 - [x] `pnpm i` succeeds at repo root
 - [x] `pnpm dev` runs control plane locally
 - [x] Postgres comes up, migrations run
-- [ ] CI passes on a fresh branch
+- [x] CI passes on a fresh branch
 
 > **Testing gate note (planned tightening in Phase 1/2):** During Phase 0 it is acceptable for the integration-test job to use `vitest run --passWithNoTests` while no integration tests exist yet.
 > Once we add the first real integration tests (expected during **Phase 1** for DB/repos and/or **Phase 2** for HTTP/auth), remove `--passWithNoTests` so CI fails if the integration-test suite is empty.
