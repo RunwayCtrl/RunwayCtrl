@@ -58,7 +58,7 @@ const seedDevTenantAndApiKey = async (): Promise<SeedResult> => {
         `
         select api_key_id
         from api_keys
-        where tenant_id = $1 and label = $2 and revoked_at is null
+        where tenant_id = $1 and label = $2
         limit 1
         `,
         [tenantId, apiKeyLabel],
@@ -112,7 +112,7 @@ export const main = async (): Promise<void> => {
     );
     console.warn('[seed] Not regenerating (plaintext cannot be recovered).');
     console.warn(
-      '[seed] To rotate, revoke/delete the row or change RUNWAYCTRL_DEV_API_KEY_LABEL and re-run.',
+      '[seed] To rotate, delete the existing API key row or change RUNWAYCTRL_DEV_API_KEY_LABEL and re-run.',
     );
     return;
   }
