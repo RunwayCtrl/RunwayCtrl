@@ -34,13 +34,15 @@
 ## Running Tests
 
 ```bash
-# All tests (unit + integration with testcontainers)
+# All tests (unit + integration)
+# Note: during Phase 0, the integration suite may be empty; it is still wired.
 pnpm test
 
 # Unit tests only
 pnpm test:unit
 
-# Integration tests with real external APIs (requires credentials)
+# Integration tests (DB via testcontainers and/or real external APIs)
+# Phase 0 note: this currently passes even if there are no integration tests yet.
 pnpm test:integration
 
 # Watch mode during development
@@ -54,7 +56,7 @@ pnpm test:coverage
 
 ## Test Naming Conventions
 
-```
+```text
 describe('<ModuleName>')
   describe('<methodName>')
     it('should <expected behavior> when <condition>')
@@ -76,7 +78,9 @@ it('should return ALLOW when all invariants pass');
 
 ## Mock-First Local Development
 
-All external API calls are mocked by default using [MSW (Mock Service Worker)](https://mswjs.io/) in Node mode.
+Planned: external API calls will be mocked using [MSW (Mock Service Worker)](https://mswjs.io/) in Node mode.
+
+MSW is **not** installed/configured yet in this Phase 0 repo. When we reach Phase 9 (real Jira/ServiceNow/GitHub integration work), we’ll add MSW and enable mock-first local development.
 
 ```typescript
 // test/mocks/handlers/jira.ts
@@ -118,7 +122,7 @@ Real API integration tests require free developer instances. **These tests run o
 
 **Required env vars:**
 
-```
+```dotenv
 JIRA_BASE_URL=https://<your-site>.atlassian.net
 JIRA_EMAIL=<your-atlassian-email>
 JIRA_API_TOKEN=<api-token-from-id.atlassian.com>
@@ -138,7 +142,7 @@ JIRA_API_TOKEN=<api-token-from-id.atlassian.com>
 
 **Required env vars:**
 
-```
+```dotenv
 SERVICENOW_INSTANCE_URL=https://<instance>.service-now.com
 SERVICENOW_USERNAME=admin
 SERVICENOW_PASSWORD=<pdi-password>
@@ -158,7 +162,7 @@ SERVICENOW_PASSWORD=<pdi-password>
 
 **Required env vars:**
 
-```
+```dotenv
 INTEGRATION_GITHUB_TOKEN=ghp_<personal-access-token>
 ```
 
@@ -187,7 +191,9 @@ All test artifacts MUST be identifiable and cleanable:
 
 ## CI Integration Tests
 
-Integration tests run in a separate job that only triggers on `main` branch pushes (after all unit/lint/typecheck jobs pass).
+Planned: run integration tests in a separate CI job that only triggers on `main` branch pushes (after all unit/lint/typecheck jobs pass).
+
+Until the first real integration test suite exists, `pnpm test:integration` is configured to pass when no tests are found.
 
 **Required GitHub Actions secrets:**
 

@@ -1,13 +1,16 @@
 # Changelog
 
-All notable changes to RunwayCtrl will be documented in this file.
+All notable changes to RunwayCtrl are documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+This project aims to follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html). Release entries are managed via Changesets.
 
----
+## 0.1.1
 
-## [Unreleased]
+### Patch Changes
+
+- Set up Changesets for versioning, changelog entries, and release automation.
+
+## 0.1.0
 
 ### Added
 
@@ -16,8 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Apache 2.0 license
 - GitHub Actions CI workflow
 - Issue and PR templates
-
----
 
 <!-- ## [0.1.0] - YYYY-MM-DD -->
 <!-- ### Added -->
