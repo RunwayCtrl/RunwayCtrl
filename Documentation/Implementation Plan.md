@@ -537,33 +537,33 @@ _Status: checked off as complete as of 2026-03-02 (repo work verified + owner co
 
 ## P1.2 Data access layer (`/packages/db` + `/apps/control-plane/src/ledger`)
 
-- [ ] Choose DB driver (prefer lightweight)
-  - [ ] **Use `pg` + `pg.Pool`** for runtime DB access
-- [ ] Implement transaction helper
-  - [ ] `withTx(fn)` acquires a pool client and runs BEGIN/COMMIT/ROLLBACK
-- [ ] Tenant scoping guardrail
-  - [ ] Introduce `RequestContext`/`TenantContext` (must include `tenant_id`) and pass it to services/repos
-- [ ] Implement repositories (tenant-scoped signatures):
-  - [ ] `ActionRepo.upsert()`
-  - [ ] `ActionRepo.getByKey()`
-  - [ ] `AttemptRepo.create()`
-  - [ ] `AttemptRepo.setStatus()`
-  - [ ] `AttemptRepo.getLatestByActionKey()`
-  - [ ] `EventRepo.append()`
-  - [ ] `LeaseRepo.acquire()`
-  - [ ] `LeaseRepo.renew()`
-  - [ ] `LeaseRepo.get()`
+- [x] Choose DB driver (prefer lightweight)
+  - [x] **Use `pg` + `pg.Pool`** for runtime DB access
+- [x] Implement transaction helper
+  - [x] `withTx(fn)` acquires a pool client and runs BEGIN/COMMIT/ROLLBACK
+- [x] Tenant scoping guardrail
+  - [x] Introduce `RequestContext`/`TenantContext` (must include `tenant_id`) and pass it to services/repos
+- [x] Implement repositories (tenant-scoped signatures):
+  - [x] `ActionRepo.upsert()`
+  - [x] `ActionRepo.getByKey()`
+  - [x] `AttemptRepo.create()`
+  - [x] `AttemptRepo.setStatus()`
+  - [x] `AttemptRepo.getLatestByActionKey()`
+  - [x] `EventRepo.append()`
+  - [x] `LeaseRepo.acquire()`
+  - [x] `LeaseRepo.renew()`
+  - [x] `LeaseRepo.get()`
 
-- [ ] Repo layering hygiene
-  - [ ] `/packages/db`: pool + tx + low-level helpers only
-  - [ ] `/apps/control-plane/src/ledger`: domain-shaped repos only (no HTTP types)
+- [x] Repo layering hygiene
+  - [x] `/packages/db`: pool + tx + low-level helpers only
+  - [x] `/apps/control-plane/src/ledger`: domain-shaped repos only (no HTTP types)
 
-- [ ] Event ordering
-  - [ ] Always order attempt events by `(ts, event_id)` (stable ordering)
+- [x] Event ordering
+  - [x] Always order attempt events by `(ts, event_id)` (stable ordering)
 
-- [ ] Add first real DB integration test (Phase 1.2)
-  - [ ] Prove tenant isolation (cannot read another tenant’s rows)
-  - [ ] Prove atomicity: action+attempt written in one tx
+- [x] Add first real DB integration test (Phase 1.2)
+  - [x] Prove tenant isolation (cannot read another tenant’s rows)
+  - [x] Prove atomicity: action+attempt written in one tx
 
 ## P1.3 Seed + fixtures
 
