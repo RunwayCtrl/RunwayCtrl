@@ -337,10 +337,11 @@ _No account needed — just install._
 
 - [x] Dependabot configuration added: `.github/dependabot.yml`
 - [x] CodeQL workflow added: `.github/workflows/codeql.yml`
-- [ ] GitHub settings: enable **Dependabot alerts** (repo → `Settings → Code security`)
-- [ ] GitHub settings: confirm **Code scanning** is enabled and the CodeQL workflow is running
-- [ ] Note: for **private repos**, CodeQL results typically require **GitHub Advanced Security** to be enabled for the org/repo
-- [ ] Decide updater: use **Dependabot** _or_ **Renovate** (avoid running both to prevent duplicate PRs)
+- [x] GitHub settings: **Dependabot alerts** enabled (repo → `Settings → Code security`)
+- [x] GitHub settings: **Dependabot security updates** enabled
+- [x] GitHub settings: **Code security** enabled (required for private repo CodeQL uploads)
+- [x] GitHub settings: **Code scanning** enabled and CodeQL results uploaded successfully
+- [x] Decide updater: use **Dependabot** (Renovate not installed)
 - [ ] (Optional) Add Codecov only if you truly want external coverage reporting (otherwise keep coverage local)
 
 ---
@@ -352,6 +353,13 @@ _No account needed — just install._
 | **Changesets** | Versioning + changelog (npm package) | `pnpm add -D @changesets/cli` in repo → `pnpm changeset init` | Phase 7 (SDK version prep) |
 
 _No account needed — just a dev dependency._
+
+**Status (verified on 2026-03-02):**
+
+- [x] Changesets installed: `@changesets/cli`
+- [x] Changesets initialized: `.changeset/config.json` + `.changeset/README.md`
+- [x] Root scripts added: `pnpm changeset`, `pnpm changeset:status`, `pnpm changeset:version`
+- [x] Changesets GitHub Action workflow added for automated versioning + publishing (publishing requires `NPM_TOKEN` secret)
 
 ---
 
@@ -365,6 +373,14 @@ _No account needed — just a dev dependency._
 | **Playwright** _(optional)_   | Browser E2E tests for console             | `pnpm add -D @playwright/test` → `npx playwright install` | Phase 10.4.9 (console E2E)            |
 
 _No accounts needed — just dev dependencies installed when their phase arrives._
+
+**Status (verified on 2026-03-02):**
+
+- [x] Unit vs integration test commands split (`pnpm test:unit`, `pnpm test:integration`)
+- [x] Vitest config files added: `vitest.unit.config.ts`, `vitest.integration.config.ts`
+- [x] Integration suite set to pass when empty during Phase 0 (`passWithNoTests: true`)
+- [x] Coverage provider installed (`@vitest/coverage-v8`) and `pnpm test:coverage` wired
+- [x] `TESTING.md` updated to match current tooling (MSW/testcontainers marked as planned)
 
 ---
 
@@ -410,7 +426,7 @@ _No accounts needed — just dev dependencies installed when their phase arrives
 - [ ] ServiceNow credentials → `SERVICENOW_USERNAME` / `SERVICENOW_PASSWORD`
 - [ ] OpenAI API key → `RUNWAYCTRL_HUB_API_KEY`
 - [ ] Resend API key → `RESEND_API_KEY`
-- [ ] npm automation token _(when publishing)_ → `NPM_TOKEN`
+- [ ] npm automation token _(when publishing; see Phase 11 “Publish readiness” checklist)_ → `NPM_TOKEN`
 - [ ] Render API key _(if using CLI)_ → platform-managed
 - [ ] Grafana Cloud / Honeycomb / Axiom OTLP endpoint + auth token → `OTEL_EXPORTER_OTLP_ENDPOINT`, `OTEL_EXPORTER_OTLP_HEADERS`
 - [ ] Codecov token _(optional)_ → `CODECOV_TOKEN`
@@ -2678,6 +2694,28 @@ This assumes a publicly reachable staging ("Layer B") that external providers ca
 - [ ] Build + ship control plane + console containers
 - [ ] Provide helm chart or simple deploy guide (v0.1 can be "docker run")
 - [ ] Release notes + changelog
+
+### Publish readiness (npm) — when to add `NPM_TOKEN`
+
+The Changesets release workflow is intentionally “safe by default”: it can open version PRs without publishing.
+Actual publishing is enabled once you add the repo secret `NPM_TOKEN`.
+
+Before adding `NPM_TOKEN`, confirm:
+
+- [ ] You are ready for external consumption (at least design partners) and you’re comfortable with the release being permanent history
+- [ ] Package names/scopes are final (e.g. `@runwayctrl/*`)
+- [ ] Packages intended to publish are **not** marked `"private": true`
+- [ ] License + README are acceptable for distribution
+- [ ] CI is green on `main`
+- [ ] `CHANGELOG.md` entry for the release looks correct
+
+Then enable publishing:
+
+- [ ] Create npm automation token (npmjs.com) with the minimum scopes needed for your org/packages
+- [ ] Add GitHub repo secret: `Settings → Secrets and variables → Actions → New repository secret`
+  - Name: `NPM_TOKEN`
+  - Value: your npm automation token
+- [ ] Re-run the release workflow (or merge the next Changesets “version packages” PR) to publish
 
 ## P11.2 Onboarding kit
 
