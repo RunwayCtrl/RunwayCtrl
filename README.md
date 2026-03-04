@@ -81,6 +81,8 @@ pnpm test
 
 Want to help implement the SDK surface? Start in `packages/` and see [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
+For local SDK development without the proprietary control plane, use the in-memory mock runtime in `packages/mock-runtime` (`@runwayctrl/mock-runtime`).
+
 ---
 
 ## Architecture

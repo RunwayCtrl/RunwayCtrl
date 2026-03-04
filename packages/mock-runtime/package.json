@@ -1,0 +1,19 @@
+{
+  "name": "@runwayctrl/mock-runtime",
+  "version": "0.1.1",
+  "private": true,
+  "type": "module",
+  "description": "In-memory mock runtime for RunwayCtrl SDK development (no HTTP, no control-plane implementation).",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}
