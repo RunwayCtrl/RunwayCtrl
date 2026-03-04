@@ -234,23 +234,12 @@ RunwayCtrl/
 
 ## Documentation
 
-Comprehensive documentation lives in [`Documentation/`](Documentation/):
+High-level docs are linked here. More detailed design notes/specs are intentionally kept out of the README.
 
-| Document                                                         | Purpose                                                   |
-| ---------------------------------------------------------------- | --------------------------------------------------------- |
-| [Project Overview](Documentation/RUNWAYCTRL_PROJECT_OVERVIEW.md) | Canonical "project brain" — guarantees, scope, primitives |
-| [PRD](Documentation/PRD%20Document.md)                           | Product requirements and success criteria                 |
-| [Implementation Plan](Documentation/Implementation%20Plan.md)    | Phased build plan with gates                              |
-| [API Contract](Documentation/API%20Contract.md)                  | Decision semantics, error semantics, idempotency          |
-| [OpenAPI Spec](Documentation/openapi.yaml)                       | Source of truth for all endpoints                         |
-| [Data Model](Documentation/Data%20Model%20Spec.md)               | ERD, table definitions, invariants                        |
-| [Backend Structure](Documentation/Backend%20Structure.md)        | Service boundaries, request lifecycle                     |
-| [Security Guidelines](Documentation/Security%20Guidelines.md)    | Threat model, data handling, controls                     |
-| [Frontend Guidelines](Documentation/Frontend%20Guidelines.md)    | Dashboard UX, design system, components                   |
-| [Tech Stack](Documentation/Tech%20Stack.md)                      | Technology choices and rationale                          |
-| [Error Codes](Documentation/Error%20Codes%20and%20Retry.md)      | Error taxonomy, retry semantics                           |
-| [OTel Contract](Documentation/02-otel-contract.md)               | Span naming, attribute allowlist                          |
-| [ADRs](Documentation/adr-log.md)                                 | Architecture Decision Records                             |
+- API reference: [`Documentation/openapi.yaml`](Documentation/openapi.yaml)
+- Change history: [`CHANGELOG.md`](CHANGELOG.md)
+- Testing conventions: [`TESTING.md`](TESTING.md)
+- Security policy: [`SECURITY.md`](SECURITY.md)
 
 ---
 
@@ -331,22 +320,9 @@ pnpm test:multi-instance
 
 ## Roadmap
 
-- [x] Spec-first documentation (API, data model, security, observability)
-- [ ] Phase 0: Repo foundation + dev environment + CI
-- [ ] Phase 1: Durable ledger (Postgres schema + migrations)
-- [ ] Phase 2: Control plane API skeleton
-- [ ] Phase 3: BeginAction + attempt lifecycle
-- [ ] Phase 4: Dedupe + replay (Guarantee A)
-- [ ] Phase 5: Leases + concurrency control (Guarantee C)
-- [ ] Phase 6: Governor v1 — budgets, backoff, circuits (Guarantee B)
-- [ ] Phase 7: TypeScript SDK v0.1
-- [ ] Phase 8: Observability + security hardening (Guarantee D)
-- [ ] Phase 8A: Multi-instance correctness testing
-- [ ] Phase 8B: Ledger Insights + execution intelligence (Guarantee E)
-- [ ] Phase 9: Production integrations (Jira + ServiceNow + GitHub)
-- [ ] Phase 10: Interactive dashboard + Integration Health panel
-- [ ] Phase 11: Beta release + design partners
-- [ ] Phase 12: Ops polish + v0.2 planning
+This project is under active development.
+
+We track detailed milestones and build phases internally; public releases and notable changes are reflected in [`CHANGELOG.md`](CHANGELOG.md) and GitHub Releases.
 
 ---
 
