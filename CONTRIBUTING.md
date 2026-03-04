@@ -68,14 +68,14 @@ For integration testing with real services (Jira, ServiceNow, GitHub), see [TEST
 
 ### Naming Conventions
 
-| Thing            | Convention      | Example                           |
-| ---------------- | --------------- | --------------------------------- |
-| Files            | kebab-case      | `begin-action.service.ts`         |
-| Classes          | PascalCase      | `ActionRepository`                |
-| Functions        | camelCase       | `beginAction()`                   |
-| Constants        | SCREAMING_SNAKE | `MAX_RETRY_ATTEMPTS`              |
-| Types/Interfaces | PascalCase      | `BeginActionRequest`              |
-| Env vars         | SCREAMING_SNAKE | `RUNWAYCTRL_EXAMPLE`              |
+| Thing            | Convention      | Example                   |
+| ---------------- | --------------- | ------------------------- |
+| Files            | kebab-case      | `begin-action.service.ts` |
+| Classes          | PascalCase      | `ActionRepository`        |
+| Functions        | camelCase       | `beginAction()`           |
+| Constants        | SCREAMING_SNAKE | `MAX_RETRY_ATTEMPTS`      |
+| Types/Interfaces | PascalCase      | `BeginActionRequest`      |
+| Env vars         | SCREAMING_SNAKE | `RUNWAYCTRL_EXAMPLE`      |
 
 ### Testing
 

@@ -18,10 +18,10 @@
 
 ## Test Pyramid
 
-| Layer             | Tool                    | Scope                                           | Run in CI    |
-| ----------------- | ----------------------- | ----------------------------------------------- | ------------ |
-| Unit              | Vitest                  | Pure functions, state machines, business logic  | ✅ Always    |
-| Integration       | Vitest                  | SDK-adjacent integration tests (as added)       | ✅ As added  |
+| Layer       | Tool   | Scope                                          | Run in CI   |
+| ----------- | ------ | ---------------------------------------------- | ----------- |
+| Unit        | Vitest | Pure functions, state machines, business logic | ✅ Always   |
+| Integration | Vitest | SDK-adjacent integration tests (as added)      | ✅ As added |
 
 ---
 

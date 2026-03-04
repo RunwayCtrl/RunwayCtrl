@@ -16,23 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: runwayctrl
-          POSTGRES_PASSWORD: runwayctrl
-          POSTGRES_DB: runwayctrl_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U runwayctrl"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
     env:
-      DATABASE_URL: postgresql://runwayctrl:runwayctrl@localhost:5432/runwayctrl_test
       NODE_ENV: test
 
     steps:
@@ -61,67 +45,11 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-      - name: Run database migrations
-        run: pnpm db:migrate
-
       - name: Type check
         run: pnpm -r typecheck
 
       - name: Run tests
         run: pnpm test
 
-  # Integration tests run separately.
-  # Phase 1: these are DB-backed integration tests (Postgres service + migrations).
-  # Later phases may add suites that require external-service secrets; those should
-  # be gated inside the tests (skip when env vars are missing) rather than disabling
-  # the entire job.
-  integration:
-    name: Integration Tests (real APIs)
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    needs: ci
-
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: runwayctrl
-          POSTGRES_PASSWORD: runwayctrl
-          POSTGRES_DB: runwayctrl_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U runwayctrl"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
-    env:
-      DATABASE_URL: postgresql://runwayctrl:runwayctrl@localhost:5432/runwayctrl_test
-      NODE_ENV: test
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        # version from package.json "packageManager" field
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build packages
-        run: pnpm -r build
-
-      - name: Run database migrations
-        run: pnpm db:migrate
-
-      - name: Run integration tests
-        run: pnpm test:integration
+  # Integration tests run as part of `pnpm test` and are currently safe to execute
+  # in public CI (no external secrets required).

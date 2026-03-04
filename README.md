@@ -87,7 +87,7 @@ For local SDK development without the proprietary control plane, use the in-memo
 
 ## Architecture
 
-RunwayCtrl sits at the *tool boundary* and helps you make agent actions safe and auditable without changing how your tools work.
+RunwayCtrl sits at the _tool boundary_ and helps you make agent actions safe and auditable without changing how your tools work.
 
 At a high level, there are four moving parts:
 
@@ -116,7 +116,6 @@ Agent / Runner ──▶ RunwayCtrl SDK ──▶ Control Plane API ──▶ Du
 
 RunwayCtrl is designed to wrap external tools and APIs (ticketing, ITSM, and code hosting).
 Specific production integrations and operational behavior are tracked privately during development.
-
 
 We welcome contributions to SDK ergonomics, request normalization, and adapter patterns.
 
