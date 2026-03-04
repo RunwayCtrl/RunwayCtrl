@@ -4,7 +4,7 @@ This repository publishes only a minimal public documentation surface.
 
 Public references:
 
-- API reference: `Documentation/openapi.yaml`
+- API reference: available to design partners and licensed users upon request
 - Change history: `CHANGELOG.md`
 - Testing conventions: `TESTING.md`
 

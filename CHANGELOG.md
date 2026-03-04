@@ -11,17 +11,17 @@ This project aims to follow [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Control-plane HTTP API skeleton (Fastify):
   - `X-Request-Id` on every response (with safe echo/generation)
   - Standard error envelope across all failures (including 404)
-  - Liveness/readiness split: `GET /healthz` (cheap) and `GET /readyz` (DB dependency)
+  - Liveness/readiness split (cheap liveness check + dependency-aware readiness check)
   - Basic abuse guardrails: per-IP and per-tenant fixed-window rate limiting
 - API key authentication with DB-friendly bearer token format:
-  - `Authorization: Bearer <api_key_id>.<api_key_secret>` (O(1) lookup by `api_key_id`)
+  - Bearer token authentication (supports fast lookup by key id)
   - Argon2id secret verification with short-lived in-process success cache
   - Revocation enforcement (`revoked_at`)
-- Minimal authenticated sanity endpoint: `GET /v1/whoami`.
+- Minimal authenticated sanity endpoint.
 - Zod validation utilities with a consistent `VALIDATION_ERROR` response mapping.
 - OpenTelemetry bootstrapping (Node SDK) + contract instrumentation:
-  - Internal span: `runwayctrl.auth.verify_api_key`
-  - Metric: `runwayctrl.http.server.duration` (histogram, seconds)
+  - Internal spans for auth and request lifecycle
+  - HTTP server duration metric (histogram)
 
 ## Phase 1 (v0.1.0-phase1)
 
@@ -46,7 +46,7 @@ This project aims to follow [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Monorepo scaffolding with pnpm workspaces and shared TypeScript configuration.
 - Local dev environment via Docker Compose (Postgres, plus optional Redis and an optional OTel Collector).
-- Minimal, runnable control-plane dev server with a `/healthz` endpoint.
+- Minimal, runnable control-plane dev server with basic health endpoints.
 - Real `db:migrate` and `db:seed` scripts (Phase 0 seed is a canary; dev tenant/API key seed is deferred).
 
 ### Changed (Phase 0)

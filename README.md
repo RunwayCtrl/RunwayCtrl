@@ -190,7 +190,7 @@ This is a pnpm workspace monorepo:
 
 High-level docs are linked here. Detailed internal specs/runbooks are intentionally not published in this repository.
 
-- API reference: [`Documentation/openapi.yaml`](Documentation/openapi.yaml)
+- API reference: available to design partners and licensed users upon request (see `Documentation/README.md`).
 - Change history: [`CHANGELOG.md`](CHANGELOG.md)
 - Testing conventions: [`TESTING.md`](TESTING.md)
 - Security policy: [`SECURITY.md`](SECURITY.md)
@@ -222,7 +222,7 @@ RunwayCtrl exposes a small HTTP API used by the SDKs to:
 - resolve unknown/ambiguous outcomes safely
 - query action status and ledger-derived insights
 
-The canonical reference is the OpenAPI spec: [`Documentation/openapi.yaml`](Documentation/openapi.yaml).
+API reference materials are shared with design partners and licensed users upon request (see `Documentation/README.md`).
 
 If you’re integrating, prefer the SDKs in `packages/` rather than calling HTTP endpoints directly.
 
