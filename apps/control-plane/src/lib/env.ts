@@ -16,11 +16,14 @@ const EnvSchema = z.object({
   // OpenTelemetry (Phase 2)
   // Default behavior: enabled in dev if an exporter endpoint is provided, disabled in tests.
   RUNWAYCTRL_OTEL_ENABLED: z
-    .preprocess((v) => {
-      if (v === undefined) return undefined;
-      if (typeof v === 'string') return v.trim();
-      return v;
-    }, z.union([z.literal('true'), z.literal('false')]).optional())
+    .preprocess(
+      (v) => {
+        if (v === undefined) return undefined;
+        if (typeof v === 'string') return v.trim();
+        return v;
+      },
+      z.union([z.literal('true'), z.literal('false')]).optional(),
+    )
     .transform((v) => {
       if (v === undefined) return undefined;
       return v === 'true';

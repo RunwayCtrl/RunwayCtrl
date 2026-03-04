@@ -24,9 +24,9 @@ describe('validation utilities', () => {
       expect(e).toBeInstanceOf(ZodError);
       const summaries = toValidationIssueSummaries(e as any);
       expect(summaries.length).toBeGreaterThan(0);
-      expect(summaries.every((s) => typeof s.path === 'string' && typeof s.message === 'string')).toBe(
-        true,
-      );
+      expect(
+        summaries.every((s) => typeof s.path === 'string' && typeof s.message === 'string'),
+      ).toBe(true);
 
       // No values should be included.
       const joined = JSON.stringify(summaries);

@@ -242,11 +242,14 @@ export const buildApp = (options: StartServerOptions): FastifyInstance => {
 
   app.addHook('onResponse', async (request, reply) => {
     // Contract metric: runwayctrl.http.server.duration (histogram, seconds)
-    const start = (request as FastifyRequest & { _runwayctrlStartTimeNs?: bigint })._runwayctrlStartTimeNs;
+    const start = (request as FastifyRequest & { _runwayctrlStartTimeNs?: bigint })
+      ._runwayctrlStartTimeNs;
     if (typeof start === 'bigint') {
       const durationSec = Number(process.hrtime.bigint() - start) / 1e9;
       const route =
-        (request.routeOptions as any)?.url ?? (request as any).routerPath ?? (request as any).context?.config?.url;
+        (request.routeOptions as any)?.url ??
+        (request as any).routerPath ??
+        (request as any).context?.config?.url;
       httpServerDuration.record(durationSec, {
         'http.route': typeof route === 'string' && route.length > 0 ? route : 'unknown',
         'http.request.method': request.method,

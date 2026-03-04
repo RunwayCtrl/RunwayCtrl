@@ -5,7 +5,10 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { Resource } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
-import { SEMRESATTRS_SERVICE_NAME, SEMRESATTRS_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
+import {
+  SEMRESATTRS_SERVICE_NAME,
+  SEMRESATTRS_SERVICE_VERSION,
+} from '@opentelemetry/semantic-conventions';
 
 import type { Env } from '../lib/env.js';
 
@@ -38,7 +41,10 @@ const shouldEnableOtel = (env: Env): boolean => {
   if (env.RUNWAYCTRL_OTEL_ENABLED !== undefined) return env.RUNWAYCTRL_OTEL_ENABLED;
 
   // If the user configured an exporter endpoint, assume they want telemetry.
-  return typeof env.OTEL_EXPORTER_OTLP_ENDPOINT === 'string' && env.OTEL_EXPORTER_OTLP_ENDPOINT.length > 0;
+  return (
+    typeof env.OTEL_EXPORTER_OTLP_ENDPOINT === 'string' &&
+    env.OTEL_EXPORTER_OTLP_ENDPOINT.length > 0
+  );
 };
 
 export const initOtel = async (env: Env): Promise<OtelHandle | null> => {
@@ -53,7 +59,10 @@ export const initOtel = async (env: Env): Promise<OtelHandle | null> => {
   const serviceVersion =
     process.env.RUNWAYCTRL_SERVICE_VERSION ?? process.env.npm_package_version ?? '0.0.0';
   const deploymentEnvironment =
-    env.DEPLOYMENT_ENVIRONMENT ?? process.env.DEPLOYMENT_ENVIRONMENT ?? process.env.NODE_ENV ?? 'development';
+    env.DEPLOYMENT_ENVIRONMENT ??
+    process.env.DEPLOYMENT_ENVIRONMENT ??
+    process.env.NODE_ENV ??
+    'development';
 
   const resource = new Resource({
     [SEMRESATTRS_SERVICE_NAME]: serviceName,
