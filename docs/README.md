@@ -1,11 +1,11 @@
 # Docs
 
-This repository’s canonical documentation lives in `Documentation/`.
+This repository publishes only a minimal public documentation surface.
 
-This `docs/` folder exists only to satisfy tooling and common conventions in monorepos.
+Public references:
 
-Start here:
+- API reference: `Documentation/openapi.yaml`
+- Change history: `CHANGELOG.md`
+- Testing conventions: `TESTING.md`
 
-- `Documentation/RUNWAYCTRL_PROJECT_OVERVIEW.md`
-- `Documentation/Implementation Plan.md`
-- `Documentation/openapi.yaml`
+Detailed design docs, runbooks, and internal planning are maintained privately.

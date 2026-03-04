@@ -35,7 +35,7 @@ RunwayCtrl is built with security as a foundational concern:
 
 - The ledger stores **hashes and pointers** by default — not raw tool request/response payloads
 - Payload capture requires explicit tenant opt-in
-- See [ADR-0009](Documentation/ADR-0009-payload-capture-stance.md)
+- Detailed rationale and threat-model notes are maintained in private design documentation.
 
 ### Tenant Isolation
 
@@ -43,7 +43,7 @@ RunwayCtrl is built with security as a foundational concern:
 - All uniqueness constraints are tenant-scoped
 - API keys are tenant-bound; cross-tenant access is architecturally impossible
 - Row Level Security (RLS) recommended as defense-in-depth
-- See [ADR-0007](Documentation/ADR-0007-multi-tenant-isolation.md)
+- Detailed design documentation is maintained privately.
 
 ### Credential Handling
 
@@ -57,7 +57,7 @@ RunwayCtrl is built with security as a foundational concern:
 - Telemetry attributes are **allowlisted**, not filtered
 - Only explicitly approved attributes are emitted to the OTel pipeline
 - This prevents accidental PII/secret leaks in traces, metrics, and logs
-- See [OTel Contract](Documentation/02-otel-contract.md)
+- The authoritative telemetry contract is maintained privately.
 
 ### Abuse Prevention
 
@@ -78,7 +78,7 @@ RunwayCtrl is built with security as a foundational concern:
 
 ## Security Controls Checklist (v0.1)
 
-For the detailed security requirements checklist, see [Security Guidelines](Documentation/Security%20Guidelines.md).
+Detailed security requirements checklists and runbooks are maintained privately.
 
 Key controls that must exist (not just be documented):
 

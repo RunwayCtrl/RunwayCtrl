@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "private": true,
   "description": "Agent execution control plane — effectively-once delivery, governed retries, bounded concurrency, and explainable runs.",
-  "license": "Apache-2.0",
+  "license": "BUSL-1.1",
   "author": "RunwayCtrl Contributors",
   "repository": {
     "type": "git",
