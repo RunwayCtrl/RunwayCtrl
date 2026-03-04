@@ -27,10 +27,7 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 
 1. **Fork the repo** and clone your fork
 2. **Install dependencies:** `pnpm install`
-3. **Start local infrastructure:** `docker compose up -d`
-4. **Run migrations:** `pnpm db:migrate`
-5. **Seed dev data:** `pnpm db:seed`
-6. **Run tests:** `pnpm test`
+3. **Run tests:** `pnpm test`
 
 See the [README](README.md) for complete setup instructions.
 
@@ -42,16 +39,13 @@ See the [README](README.md) for complete setup instructions.
 
 - **Node.js** ≥ 20 (LTS)
 - **pnpm** (package manager — do not use npm or yarn)
-- **Docker** (for Postgres and optional Redis)
 - **Git** with conventional commit awareness
 
 ### Environment
 
-Copy `.env.example` to `.env.local` for local development:
+No environment variables are required for typical SDK/library development.
 
-```bash
-cp .env.example .env.local
-```
+The proprietary control plane/runtime is not published in this repository.
 
 For integration testing with real services (Jira, ServiceNow, GitHub), see [TESTING.md](TESTING.md).
 
@@ -81,22 +75,19 @@ For integration testing with real services (Jira, ServiceNow, GitHub), see [TEST
 | Functions        | camelCase       | `beginAction()`                   |
 | Constants        | SCREAMING_SNAKE | `MAX_RETRY_ATTEMPTS`              |
 | Types/Interfaces | PascalCase      | `BeginActionRequest`              |
-| Database columns | snake_case      | `action_key`, `tenant_id`         |
-| API fields       | snake_case      | `retry_after_ms`, `failure_class` |
-| Env vars         | SCREAMING_SNAKE | `JIRA_API_TOKEN`                  |
+| Env vars         | SCREAMING_SNAKE | `RUNWAYCTRL_EXAMPLE`              |
 
 ### Testing
 
 - **Unit tests:** colocated with source (`*.test.ts`)
 - **Integration tests:** colocated with source (`*.integration.test.ts`)
 - **Test runner:** Vitest
-- **Mocking:** MSW (Node) for external API mocks via `@runwayctrl/testkit`
-- **Database tests:** testcontainers-node for real Postgres
+- **Mocking:** external API mocks (planned)
 - Every new feature must include tests. PRs without tests will be returned.
 
 ### Documentation
 
-- Every behavior change must update the relevant _public_ docs in the same PR (README, OpenAPI, changelog as applicable)
+- Every behavior change must update the relevant _public_ docs in the same PR (README, changelog as applicable)
 - Some design documentation (roadmap/runbooks/internal ADRs) is maintained privately; external contributors should focus PRs on code + tests + API surface
 - Inline code comments for non-obvious "why" decisions (not "what" — code should be self-explanatory)
 
@@ -107,7 +98,7 @@ For integration testing with real services (Jira, ServiceNow, GitHub), see [TEST
 We use [Conventional Commits](https://www.conventionalcommits.org/) and **enforce them in CI**.
 
 Because we **squash-merge** PRs to `main`, the **PR title becomes the commit message** on `main`.
-So: make your PR title a valid conventional commit (e.g. `feat(api): add /healthz`).
+So: make your PR title a valid conventional commit (e.g. `feat(sdk): add typed helpers for action keys`).
 
 ```text
 <type>(<scope>): <description>
@@ -133,15 +124,15 @@ So: make your PR title a valid conventional commit (e.g. `feat(api): add /health
 
 ### Scopes (optional but encouraged)
 
-`api`, `sdk`, `ledger`, `governor`, `leases`, `auth`, `otel`, `console`, `jira`, `servicenow`, `github`, `docs`, `ci`, `db`
+`sdk`, `shared`, `docs`, `ci`, `tooling`
 
 ### Examples
 
 ```text
-feat(api): implement BeginAction endpoint with dedupe/replay logic
-fix(leases): prevent lease grant when existing holder has not expired
-docs(adr): add ADR-0010 for rate limit header capture strategy
-test(jira): add MSW handlers for 409 transition conflict scenario
+feat(sdk): add typed helper utilities
+fix(shared): tighten runtime validation
+docs: improve SDK usage examples
+test(sdk): add unit tests for key normalization
 chore(deps): update vitest to 3.x
 
 # Squash merge commit examples (PR titles)

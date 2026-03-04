@@ -11,10 +11,6 @@
 - [Test Naming Conventions](#test-naming-conventions)
 - [Mock-First Local Development](#mock-first-local-development)
 - [Integration Test Instances](#integration-test-instances)
-  - [Jira Cloud (Developer Site)](#jira-cloud-developer-site)
-  - [ServiceNow (Personal Developer Instance)](#servicenow-personal-developer-instance)
-  - [GitHub (Test Repository)](#github-test-repository)
-- [Test Data Conventions](#test-data-conventions)
 - [CI Integration Tests](#ci-integration-tests)
 - [Concurrency & Stress Tests](#concurrency--stress-tests)
 
@@ -25,9 +21,7 @@
 | Layer             | Tool                    | Scope                                           | Run in CI    |
 | ----------------- | ----------------------- | ----------------------------------------------- | ------------ |
 | Unit              | Vitest                  | Pure functions, state machines, business logic  | ✅ Always    |
-| Integration (DB)  | Vitest + testcontainers | Repository layer, migrations, CAS invariants    | ✅ Always    |
-| Integration (API) | Vitest + real APIs      | Real Jira / ServiceNow / GitHub calls           | ✅ Main only |
-| Concurrency       | Vitest                  | Parallel workers, lease contention, dedup races | ✅ Always    |
+| Integration       | Vitest                  | SDK-adjacent integration tests (as added)       | ✅ As added  |
 
 ---
 
@@ -41,8 +35,8 @@ pnpm test
 # Unit tests only
 pnpm test:unit
 
-# Integration tests (DB via testcontainers and/or real external APIs)
-# Phase 0 note: this currently passes even if there are no integration tests yet.
+# Integration tests (as added)
+# Note: this currently passes even if there are no integration tests yet.
 pnpm test:integration
 
 # Watch mode during development
@@ -107,123 +101,22 @@ MSW handlers live in `test/mocks/handlers/` with one file per integration:
 
 ## Integration Test Instances
 
-Real API integration tests require free developer instances. **These tests run only on `main` branch pushes in CI** and can be run locally with proper credentials.
+This public repository focuses on SDK/library contributions.
 
-### Jira Cloud (Developer Site)
-
-**Signup:** [developer.atlassian.com/console/myapps](https://developer.atlassian.com/console/myapps/) → Create a free Cloud developer site.
-
-| Setting           | Value                        |
-| ----------------- | ---------------------------- |
-| Project key       | `RCTEST`                     |
-| Label (all items) | `runwayctrl-test`            |
-| Issue type        | `Task` (default)             |
-| Cleanup strategy  | Filter by label, bulk delete |
-
-**Required env vars:**
-
-```dotenv
-JIRA_BASE_URL=https://<your-site>.atlassian.net
-JIRA_EMAIL=<your-atlassian-email>
-JIRA_API_TOKEN=<api-token-from-id.atlassian.com>
-```
-
-**Generate API token:** [id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens)
-
-### ServiceNow (Personal Developer Instance)
-
-**Signup:** [developer.servicenow.com](https://developer.servicenow.com/) → Request a Personal Developer Instance (PDI).
-
-| Setting          | Value                                 |
-| ---------------- | ------------------------------------- |
-| Category         | `RunwayCtrl Test`                     |
-| Assignment group | `RunwayCtrl Dev`                      |
-| Cleanup strategy | Script: delete by category, 7-day TTL |
-
-**Required env vars:**
-
-```dotenv
-SERVICENOW_INSTANCE_URL=https://<instance>.service-now.com
-SERVICENOW_USERNAME=admin
-SERVICENOW_PASSWORD=<pdi-password>
-```
-
-> ⚠️ ServiceNow PDIs hibernate after ~10 days of inactivity. Wake yours before running integration tests.
-
-### GitHub (Test Repository)
-
-**Setup:** Create a private repository named `runwayctrl-integration-test` under your GitHub account.
-
-| Setting           | Value                                           |
-| ----------------- | ----------------------------------------------- |
-| Repository        | `<owner>/runwayctrl-integration-test` (private) |
-| Label (all items) | `runwayctrl-test`                               |
-| Cleanup strategy  | Close test issues/PRs by label                  |
-
-**Required env vars:**
-
-```dotenv
-INTEGRATION_GITHUB_TOKEN=ghp_<personal-access-token>
-```
-
-**Token scopes needed:** `repo`, `workflow`
-
----
-
-## Test Data Conventions
-
-All test artifacts MUST be identifiable and cleanable:
-
-| Integration | Marker                      | Cleanup Method                                     |
-| ----------- | --------------------------- | -------------------------------------------------- |
-| Jira        | Label: `runwayctrl-test`    | JQL: `labels = runwayctrl-test` → bulk delete      |
-| ServiceNow  | Category: `RunwayCtrl Test` | Script: query by category, delete records > 7 days |
-| GitHub      | Label: `runwayctrl-test`    | API: list by label → close/delete                  |
-
-**Rules:**
-
-1. Every test-created resource MUST carry the marker label/category
-2. Test cleanup runs in `afterAll()` hooks — best effort, not fatal on failure
-3. Integration tests are idempotent — safe to rerun without manual cleanup
-4. Never use production credentials in test instances
+Runtime-level integration testing (control plane, databases, hosted environments, and production integrations) is handled privately during development.
 
 ---
 
 ## CI Integration Tests
 
-Planned: run integration tests in a separate CI job that only triggers on `main` branch pushes (after all unit/lint/typecheck jobs pass).
+Planned: run integration tests in a separate CI job (after unit/lint/typecheck jobs pass).
 
 Until the first real integration test suite exists, `pnpm test:integration` is configured to pass when no tests are found.
 
-**Required GitHub Actions secrets:**
-
-| Secret                     | Description                   |
-| -------------------------- | ----------------------------- |
-| `JIRA_BASE_URL`            | Jira Cloud developer site URL |
-| `JIRA_EMAIL`               | Atlassian account email       |
-| `JIRA_API_TOKEN`           | Jira API token                |
-| `SERVICENOW_INSTANCE_URL`  | ServiceNow PDI URL            |
-| `SERVICENOW_USERNAME`      | ServiceNow admin username     |
-| `SERVICENOW_PASSWORD`      | ServiceNow admin password     |
-| `INTEGRATION_GITHUB_TOKEN` | GitHub PAT for test repo      |
+CI secrets for runtime-level integration tests are managed privately.
 
 ---
 
 ## Concurrency & Stress Tests
 
-Concurrency tests validate RunwayCtrl's core guarantees under parallel load:
-
-```bash
-# Run concurrency test suite
-pnpm test -- --grep "concurrency"
-```
-
-**What they cover:**
-
-- **Guarantee A (Effectively-once):** Parallel `BeginAction` calls with same `action_key` → only one proceeds
-- **Guarantee B (Governed retries):** Concurrent retry evaluations respect rate limit thresholds
-- **Guarantee C (Bounded concurrency):** Lease acquisition under contention → respects `max_leases`
-- **Race conditions:** CAS (Compare-And-Swap) version conflicts resolve correctly
-- **Deadlock detection:** Concurrent transactions on the same action don't deadlock
-
-These use Vitest's worker threads to simulate realistic parallel execution.
+Concurrency and stress testing for the full system (including the control plane/runtime) is handled privately during development.

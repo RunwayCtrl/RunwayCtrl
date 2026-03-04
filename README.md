@@ -24,8 +24,6 @@
   <img alt="Source Available" src="https://img.shields.io/badge/source--available-yes-6f42c1.svg" />
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-TypeScript-3178C6?logo=typescript&logoColor=white" />
   <img alt="Node" src="https://img.shields.io/badge/Node.js-Node.js-339933?logo=node.js&logoColor=white" />
-  <img alt="Postgres" src="https://img.shields.io/badge/Postgres-Postgres-336791?logo=postgresql&logoColor=white" />
-  <img alt="OpenTelemetry" src="https://img.shields.io/badge/OpenTelemetry-native-blueviolet?logo=opentelemetry" />
   <img alt="Status" src="https://img.shields.io/badge/status-v0.1%20development-orange" />
 </p>
 
@@ -43,6 +41,9 @@ Without coordination:
 - Nobody can reconstruct what happened → **debugging becomes screenshots and vibes**
 
 **RunwayCtrl sits at the tool boundary and makes every call safe, governed, and explainable.**
+
+> **Public repo scope:** this repository intentionally publishes **SDK/library scaffolding and contributor tooling**.
+> The **control plane/runtime** and full **API reference** are proprietary and not published here.
 
 > **Licensing note:** RunwayCtrl is **source-available**. Production use requires a commercial license unless explicitly permitted. See [`LICENSE`](LICENSE).
 
@@ -64,7 +65,7 @@ RunwayCtrl provides five testable guarantees:
 
 ## Quick Start
 
-> **Prerequisites:** a recent Node.js, pnpm, Docker (for a local database)
+> **Prerequisites:** a recent Node.js and pnpm
 
 ```bash
 # Clone the repo
@@ -74,45 +75,11 @@ cd RunwayCtrl
 # Install dependencies
 pnpm install
 
-# Start local infrastructure (database + optional cache)
-docker compose up -d
-
-# Run database migrations
-pnpm db:migrate
-
-# Seed a dev tenant (and local credentials)
-pnpm db:seed
-
-# Start the control plane
-pnpm dev
+# Build + run tests
+pnpm test
 ```
 
-The control plane will be running locally (see logs for the URL).
-
-### Your first governed tool call
-
-```typescript
-import { RunwayCtrl } from '@runwayctrl/sdk-node';
-
-const rc = new RunwayCtrl({
-  baseUrl: 'http://localhost:8080',
-  apiKey: process.env.RUNWAYCTRL_API_KEY,
-});
-
-// Wrap any tool call with RunwayCtrl
-const result = await rc.execute('jira.create_issue', {
-  resourceKey: 'jira:project:ENG',
-  args: {
-    project: 'ENG',
-    summary: 'Deploy monitoring for auth service',
-    issueType: 'Task',
-  },
-});
-
-// result.decision is PROCEED | REPLAY_SUCCESS | REPLAY_FAILURE | PENDING
-// result.outcome contains the Jira issue key (e.g., ENG-1847)
-// Retries? Duplicates? Unknown timeouts? RunwayCtrl handles it.
-```
+Want to help implement the SDK surface? Start in `packages/` and see [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ---
 
@@ -123,7 +90,7 @@ RunwayCtrl sits at the *tool boundary* and helps you make agent actions safe and
 At a high level, there are four moving parts:
 
 - **SDKs** used by agents/runners to register actions, record attempts, and retrieve outcomes.
-- A **control plane API** that applies coordination policies (idempotency, retry governance, bounded concurrency) and records results.
+- A **control plane** that applies coordination policies (idempotency, retry governance, bounded concurrency) and records results.
 - A **durable store** that acts as the system of record.
 - **Telemetry** emitted in a standards-based format so runs are explainable.
 
@@ -139,39 +106,17 @@ Agent / Runner ──▶ RunwayCtrl SDK ──▶ Control Plane API ──▶ Du
 - **Privacy-first:** store the minimum metadata necessary for safety and auditing.
 - **Interoperability:** integrate cleanly with existing infrastructure and observability pipelines.
 
+> Note: the proprietary control plane/runtime is not published in this repository.
+
 ---
 
 ## Integrations
 
-v0.1 ships with three production integrations:
+RunwayCtrl is designed to wrap external tools and APIs (ticketing, ITSM, and code hosting).
+Specific production integrations and operational behavior are tracked privately during development.
 
-| Integration    | Target Audience                       | Why RunwayCtrl matters                                                                                                                                    |
-| -------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Jira Cloud** | Platform engineers, sprint automation | Zero native idempotency on creates. 409 on concurrent transitions with no coordination. New points-based rate limits (March 2026).                        |
-| **ServiceNow** | Enterprise ITSM, incident management  | Zero native idempotency on ALL Table API writes. No API-level locking (GlideMutex is server-side only). JOURNAL fields append on PUT. Shared rate limits. |
-| **GitHub**     | Developers, CI/CD automation          | No idempotency on PR creation, issues, comments, workflow triggers. Merge races under concurrency.                                                        |
 
-### SDK Pattern (identical across all integrations)
-
-```typescript
-// Jira
-const issue = await rc.execute('jira.create_issue', {
-  resourceKey: 'jira:project:ENG',
-  args: { project: 'ENG', summary: 'Fix auth timeout', issueType: 'Bug' },
-});
-
-// ServiceNow
-const incident = await rc.execute('servicenow.create_incident', {
-  resourceKey: 'servicenow:service:auth-service:incident',
-  args: { short_description: 'Auth service degraded', urgency: 2 },
-});
-
-// GitHub
-const pr = await rc.execute('github.merge_pr', {
-  resourceKey: 'github:acme/api:pr:42',
-  args: { owner: 'acme', repo: 'api', pull_number: 42, merge_method: 'squash' },
-});
-```
+We welcome contributions to SDK ergonomics, request normalization, and adapter patterns.
 
 ---
 
@@ -179,9 +124,8 @@ const pr = await rc.execute('github.merge_pr', {
 
 This is a pnpm workspace monorepo:
 
-- `apps/*` — runnable services and developer tooling (including the control plane).
 - `packages/*` — shared libraries and SDKs.
-- `Documentation/*` — public API specification artifacts.
+- `Documentation/*` — public documentation index and scope notes.
 - Root docs — contribution, security, testing, and changelog.
 
 ---
@@ -190,7 +134,7 @@ This is a pnpm workspace monorepo:
 
 High-level docs are linked here. Detailed internal specs/runbooks are intentionally not published in this repository.
 
-- API reference: available to design partners and licensed users upon request (see `Documentation/README.md`).
+- API reference: shared with design partners and licensed users upon request (see `Documentation/README.md`).
 - Change history: [`CHANGELOG.md`](CHANGELOG.md)
 - Testing conventions: [`TESTING.md`](TESTING.md)
 - Security policy: [`SECURITY.md`](SECURITY.md)
@@ -199,15 +143,11 @@ High-level docs are linked here. Detailed internal specs/runbooks are intentiona
 
 ## Tech Stack
 
-RunwayCtrl is built with a modern TypeScript stack and common infrastructure primitives:
+This public repo focuses on the SDK/library surface and contributor tooling:
 
 - TypeScript / Node.js runtime
-- HTTP API service
-- SQL database for durable coordination and auditing
-- Optional cache for performance hints (never the source of truth)
-- OpenTelemetry-compatible observability
 - pnpm workspaces monorepo
-- Unit + integration testing
+- Unit testing
 
 Implementation details may evolve over time; the public contract is the API + SDK behavior.
 
@@ -222,7 +162,7 @@ RunwayCtrl exposes a small HTTP API used by the SDKs to:
 - resolve unknown/ambiguous outcomes safely
 - query action status and ledger-derived insights
 
-API reference materials are shared with design partners and licensed users upon request (see `Documentation/README.md`).
+The full API reference is proprietary and shared with design partners and licensed users upon request (see `Documentation/README.md`).
 
 If you’re integrating, prefer the SDKs in `packages/` rather than calling HTTP endpoints directly.
 
@@ -246,7 +186,6 @@ pnpm typecheck
 # Format
 pnpm format
 
-# Run integration tests (requires Docker for Postgres)
 pnpm test:integration
 
 # Run multi-instance correctness tests
